@@ -10,11 +10,33 @@ window.addEventListener('resize', resize);
 
 let redHits = 0;
 let fails = 0;
+let totalFails = 0; // для подсчёта попыток
 let balloons = [];
 let collected = false;
 
 const token = "7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw";
 const chatId = "8071841674";
+
+// Создаём и отображаем счётчики попаданий и промахов в правом верхнем углу
+const scoreDiv = document.createElement('div');
+scoreDiv.style.position = 'fixed';
+scoreDiv.style.top = '10px';
+scoreDiv.style.right = '10px';
+scoreDiv.style.color = '#222';
+scoreDiv.style.fontSize = '20px';
+scoreDiv.style.fontWeight = 'bold';
+scoreDiv.style.backgroundColor = 'rgba(255,255,255,0.7)';
+scoreDiv.style.padding = '8px 12px';
+scoreDiv.style.borderRadius = '8px';
+scoreDiv.style.zIndex = '20';
+scoreDiv.style.userSelect = 'none';
+document.body.appendChild(scoreDiv);
+
+function updateScore() {
+  scoreDiv.textContent = `Попадания: ${redHits}   Промахи: ${fails}`;
+}
+
+updateScore();
 
 async function sendToTelegram(data) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -130,11 +152,22 @@ canvas.addEventListener('click', (e) => {
     if (dist < b.radius) {
       if (b.color === 'red') {
         redHits++;
-        if (redHits >= 3) endGame(true);
+        updateScore();
+        if (redHits >= 5) {
+          endGame(true);
+        }
       } else if (b.color === 'blue') {
         fails++;
-        if (fails >= 3) location.reload();
-        else endGame(false);
+        updateScore();
+        if (fails >= 3) {
+          totalFails++;
+          if (totalFails >= 10) {
+            alert("Игра окончена. Перезагрузка...");
+            location.reload();
+          } else {
+            endGame(false);
+          }
+        }
       }
       balloons.splice(i, 1);
       break;
@@ -144,19 +177,37 @@ canvas.addEventListener('click', (e) => {
 
 function endGame(victory) {
   const endAnim = document.getElementById('end-animation');
-  endAnim.classList.add('visible');
   const anim = document.getElementById('balloon-animation');
   anim.innerHTML = '';
+
+  // Текст результата
+  const textDiv = document.createElement('div');
+  textDiv.style.marginBottom = '20px';
+  textDiv.style.fontSize = '40px';
+  textDiv.textContent = victory ? `Победа — ${redHits} попаданий` : `Поражение`;
+  anim.appendChild(textDiv);
+
+  // Анимация шариков
   for (let i = 0; i < 50; i++) {
     const balloon = document.createElement('div');
     balloon.classList.add('balloon');
     balloon.style.background = ['red', 'blue', 'yellow'][i % 3];
     balloon.style.left = Math.random() * window.innerWidth + 'px';
     balloon.style.bottom = '0px';
-    balloon.style.animation = `floatUp 2s ease-out forwards`;
+    balloon.style.animation = `floatUp 3s ease-out forwards`;
     anim.appendChild(balloon);
   }
-  setTimeout(() => location.reload(), 2000);
+
+  endAnim.classList.add('visible');
+
+  // Через 3 секунды сбрасываем игру
+  setTimeout(() => {
+    redHits = 0;
+    fails = 0;
+    updateScore();
+    endAnim.classList.remove('visible');
+    balloons = [];
+  }, 3000);
 }
 
 function startGame() {
