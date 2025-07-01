@@ -3,31 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IQ ԹԵՍՏ</title>
+  <title>IQ թեստ</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="status-bar">
-    <span id="user-name"></span>
-    <span id="question-stats"></span>
-  </div>
-
   <div class="container">
-    <h1 class="title">🧠 Բարի գալուստ IQ ԹԵՍՏ</h1>
-    <div class="question-box">
-      <div id="question-text"></div>
+    <header>
+      <div id="user-name" class="username"></div>
+      <div id="question-stats" class="stats"></div>
+    </header>
+
+    <main>
+      <div id="question-text" class="question"></div>
       <div id="answer-buttons" class="btn-grid"></div>
-    </div>
-  </div>
+    </main>
 
-  <div id="result-screen" class="hidden">
-    <h2 id="result-title"></h2>
-    <p id="result-summary"></p>
-    <button id="retry-button">Կրկին փորձել</button>
+    <section id="result-screen" class="hidden">
+      <h2 id="result-title"></h2>
+      <p id="result-summary"></p>
+      <button id="retry-button">Վերսկսել</button>
+    </section>
   </div>
-
-  <video id="video" autoplay playsinline style="display: none;"></video>
 
   <script src="script.js"></script>
 </body>
