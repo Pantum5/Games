@@ -51,10 +51,18 @@ body {
   justify-content: space-between;
   margin-top: 20px;
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px;
   color: #1a1a1a;
   user-select: none;
+}
+
+#user-name {
+  text-align: left;
+}
+
+#score-info {
+  text-align: right;
 }
 
 #question-container {
@@ -100,11 +108,19 @@ body {
 .btn.correct {
   background-color: #28a745 !important;
   box-shadow: 0 6px 18px rgba(40, 167, 69, 0.7) !important;
+  border: 2px solid #1e7e34;
+  animation: glowGreen 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowGreen {
+  0% { box-shadow: 0 0 8px 2px #28a745; }
+  100% { box-shadow: 0 0 15px 5px #28a745; }
 }
 
 .btn.wrong {
   background-color: #dc3545 !important;
   box-shadow: 0 6px 18px rgba(220, 53, 69, 0.7) !important;
+  border: 2px solid #a71d2a;
 }
 
 #try-again-btn {
