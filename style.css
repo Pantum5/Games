@@ -3,7 +3,7 @@ body {
   background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
   color: #222;
   margin: 0;
-  padding: 0 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -16,91 +16,113 @@ body {
 }
 
 #name-input {
-  padding: 8px 12px;
-  font-size: 16px;
-  margin-top: 8px;
-  width: 250px;
-  border-radius: 5px;
-  border: 1px solid #888;
+  padding: 10px 14px;
+  font-size: 18px;
+  margin-top: 10px;
+  width: 280px;
+  border-radius: 8px;
+  border: 1.5px solid #888;
+  transition: border-color 0.3s;
+}
+
+#name-input:focus {
+  border-color: #3a86ff;
+  outline: none;
 }
 
 #name-form button {
-  margin-left: 10px;
-  padding: 8px 16px;
-  font-size: 16px;
-  border-radius: 5px;
+  margin-left: 15px;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 8px;
   border: none;
   background-color: #3a86ff;
   color: white;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#name-form button:hover {
+  background-color: #2657a6;
 }
 
 #header-bar {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-#user-name {
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 20px;
   color: #1a1a1a;
-}
-
-#score-info {
-  color: #1a1a1a;
+  user-select: none;
 }
 
 #question-container {
-  background: rgba(255,255,255,0.85);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 #question {
-  font-size: 22px;
-  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #222;
 }
 
 .btn-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
 .btn {
   background-color: #3a86ff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   color: white;
-  padding: 12px 10px;
-  font-size: 18px;
+  padding: 14px 10px;
+  font-size: 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(58, 134, 255, 0.5);
+  user-select: none;
 }
 
 .btn:hover {
   background-color: #2657a6;
+  box-shadow: 0 6px 18px rgba(38, 87, 166, 0.7);
+}
+
+.btn.correct {
+  background-color: #28a745 !important;
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.7) !important;
+}
+
+.btn.wrong {
+  background-color: #dc3545 !important;
+  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.7) !important;
 }
 
 #try-again-btn {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 18px;
+  margin-top: 30px;
+  padding: 14px 28px;
+  font-size: 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background-color: #ff4b5c;
   color: white;
   cursor: pointer;
   display: block;
-  width: 100%;
-  max-width: 300px;
+  max-width: 280px;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0 5px 15px rgba(255, 75, 92, 0.5);
+  box-shadow: 0 6px 20px rgba(255, 75, 92, 0.7);
   transition: background-color 0.3s;
+  user-select: none;
 }
 
 #try-again-btn:hover {
