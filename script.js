@@ -143,7 +143,8 @@ canvas.addEventListener('click', (e) => {
 });
 
 function endGame(victory) {
-  document.getElementById('end-animation').classList.remove('hidden');
+  const endAnim = document.getElementById('end-animation');
+  endAnim.classList.add('visible');
   const anim = document.getElementById('balloon-animation');
   anim.innerHTML = '';
   for (let i = 0; i < 50; i++) {
