@@ -1,171 +1,152 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-  color: #222;
-  margin: 0;
-  padding: 20px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  overflow-x: hidden;
-  animation: bgGradient 15s ease infinite;
+const nameFormContainer = document.getElementById('name-form-container');
+const nameForm = document.getElementById('name-form');
+const nameInput = document.getElementById('name-input');
+const gameArea = document.getElementById('game-area');
+const userNameDisplay = document.getElementById('user-name');
+const scoreInfo = document.getElementById('score-info');
+const questionElement = document.getElementById('question');
+const answerButtons = document.getElementById('answer-buttons');
+const tryAgainBtn = document.getElementById('try-again-btn');
+
+let userName = '';
+let questions = [
+  {
+    question: 'Որն է Հայաստանի մայրաքաղաքը?',
+    answers: [
+      { text: 'Երևան', correct: true },
+      { text: 'Թբիլիսի', correct: false },
+      { text: 'Բաքու', correct: false },
+      { text: 'Ստեփանակերտ', correct: false }
+    ]
+  },
+  {
+    question: 'Որն է Ռուսաստանի մայրաքաղաքը?',
+    answers: [
+      { text: 'Մոսկվա', correct: true },
+      { text: 'Սանկտ Պետերբուրգ', correct: false },
+      { text: 'Կազան', correct: false },
+      { text: 'Նովոսիբիրսկ', correct: false }
+    ]
+  },
+  // остальные вопросы с разным расположением правильного ответа
+];
+
+let shuffledQuestions = [];
+let currentQuestionIndex = 0;
+let correctCount = 0;
+let wrongCount = 0;
+
+nameForm.addEventListener('submit', e => {
+  e.preventDefault();
+  userName = nameInput.value.trim();
+  if (!userName) return;
+  startGame();
+});
+
+function startGame() {
+  nameFormContainer.style.display = 'none';
+  gameArea.style.display = 'block';
+  userNameDisplay.textContent = `Անուն՝ ${userName}`;
+  resetGame();
+  shuffleQuestions();
+  showQuestion();
+  updateScore();
+  tryAgainBtn.style.display = 'none';
 }
 
-@keyframes bgGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+function resetGame() {
+  currentQuestionIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
 }
 
-#name-form-container, #game-area {
-  width: 100%;
-  max-width: 480px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-  padding: 20px;
-  box-sizing: border-box;
-  animation: fadeIn 0.6s ease forwards;
+function shuffleQuestions() {
+  shuffledQuestions = questions
+    .map(q => ({ ...q }))
+    .sort(() => Math.random() - 0.5);
+  shuffledQuestions.forEach(q => {
+    q.answers = q.answers.sort(() => Math.random() - 0.5);
+  });
 }
 
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
+function showQuestion() {
+  resetState();
+
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  questionElement.textContent = currentQuestion.question;
+
+  // Анимация плавного появления
+  questionElement.style.opacity = 0;
+  answerButtons.style.opacity = 0;
+
+  setTimeout(() => {
+    questionElement.style.transition = 'opacity 0.5s';
+    answerButtons.style.transition = 'opacity 0.5s';
+    questionElement.style.opacity = 1;
+    answerButtons.style.opacity = 1;
+  }, 50);
+
+  currentQuestion.answers.forEach(answer => {
+    const button = document.createElement('button');
+    button.innerText = answer.text;
+    button.classList.add('btn');
+    button.addEventListener('click', () => selectAnswer(button, answer.correct));
+    answerButtons.appendChild(button);
+  });
 }
 
-#name-form label {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-  display: block;
+function resetState() {
+  clearStatusClass(document.body);
+  while (answerButtons.firstChild) {
+    answerButtons.removeChild(answerButtons.firstChild);
+  }
 }
 
-#name-input {
-  width: 100%;
-  padding: 12px;
-  font-size: 1.2rem;
-  border-radius: 10px;
-  border: 1px solid #aaa;
-  margin-bottom: 16px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
+function selectAnswer(button, correct) {
+  if (correct) {
+    button.classList.add('correct');
+    correctCount++;
+  } else {
+    button.classList.add('wrong');
+    wrongCount++;
+    // Подсветить правильный ответ
+    Array.from(answerButtons.children).forEach(btn => {
+      if (shuffledQuestions[currentQuestionIndex].answers.find(a => a.text === btn.innerText && a.correct)) {
+        btn.classList.add('correct');
+      }
+    });
+  }
+
+  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
+
+  updateScore();
+
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < shuffledQuestions.length) {
+      showQuestion();
+    } else {
+      endGame();
+    }
+  }, 1500);
 }
 
-#name-input:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 6px rgba(74,144,226,0.6);
+function updateScore() {
+  const remaining = shuffledQuestions.length - currentQuestionIndex;
+  scoreInfo.textContent = `Մնացել է՝ ${remaining} | Ճիշտ՝ ${correctCount} | Սխալ՝ ${wrongCount}`;
 }
 
-#name-form button {
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  background: #4a90e2;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  font-weight: 700;
-  transition: background 0.3s ease, transform 0.15s ease;
-  box-shadow: 0 5px 10px rgba(74,144,226,0.5);
+function endGame() {
+  questionElement.textContent = `Խաղը ավարտվեց։ ${correctCount >= 5 ? 'Դուք հաղթեցիք!' : 'Դուք պարտվեցիք։'}`;
+  answerButtons.style.display = 'none';
+  tryAgainBtn.style.display = 'block';
 }
 
-#name-form button:hover {
-  background: #357ABD;
-  transform: scale(1.05);
-}
-
-#header-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #222;
-  user-select: none;
-  animation: fadeIn 0.6s ease forwards;
-}
-
-#question-container {
-  margin-bottom: 24px;
-  animation: fadeIn 0.7s ease forwards;
-}
-
-#question {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 18px;
-  min-height: 60px;
-  color: #222;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
-
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.btn {
-  padding: 16px 14px;
-  font-size: 1.2rem;
-  background: #e0e0e0;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.15s ease;
-  user-select: none;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.btn:hover:not(:disabled) {
-  background: #c8d6e5;
-  transform: scale(1.04);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
-}
-
-.btn.correct {
-  background-color: #4CAF50 !important;
-  color: white;
-  font-weight: 700;
-  animation: pulseGreen 1s ease forwards;
-}
-
-.btn.wrong {
-  background-color: #F44336 !important;
-  color: white;
-  font-weight: 700;
-  animation: pulseRed 1s ease forwards;
-}
-
-@keyframes pulseGreen {
-  0%, 100% { box-shadow: 0 0 6px #4CAF50; }
-  50% { box-shadow: 0 0 16px #4CAF50; }
-}
-
-@keyframes pulseRed {
-  0%, 100% { box-shadow: 0 0 6px #F44336; }
-  50% { box-shadow: 0 0 16px #F44336; }
-}
-
-#try-again-btn {
-  width: 100%;
-  padding: 14px;
-  font-size: 1.3rem;
-  background: #ff7043;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  font-weight: 700;
-  transition: background 0.3s ease, transform 0.15s ease;
-  box-shadow: 0 5px 12px rgba(255,112,67,0.7);
-  animation: fadeIn 0.6s ease forwards;
-}
-
-#try-again-btn:hover {
-  background: #e64a19;
-  transform: scale(1.05);
-}
+tryAgainBtn.addEventListener('click', () => {
+  tryAgainBtn.style.display = 'none';
+  answerButtons.style.display = 'flex';
+  resetGame();
+  shuffleQuestions();
+  showQuestion();
+  updateScore();
+});
