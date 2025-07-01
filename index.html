@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IQ թեստ - երկրներ և մայրաքաղաքներ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="name-form-container">
+    <form id="name-form">
+      <label for="name-input">Մուտքագրեք ձեր անունը</label><br />
+      <input id="name-input" type="text" autocomplete="off" required />
+      <button type="submit">Սկսել խաղը</button>
+    </form>
+  </div>
 
+  <div id="game-area" style="display:none;">
+    <div id="header-bar">
+      <div id="user-name"></div>
+      <div id="score-info"></div>
+    </div>
+    <div id="question-container">
+      <div id="question"></div>
+      <div id="answer-buttons" class="btn-grid"></div>
+    </div>
+    <button id="try-again-btn" style="display:none;">Փորձել նորից</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
