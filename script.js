@@ -1,146 +1,198 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
-  color: #222;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+const questionsPool = [
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Հայաստանի։",
+    answers: [
+      { text: "Երևան", correct: true },
+      { text: "Գյումրի", correct: false },
+      { text: "Վանաձոր", correct: false },
+      { text: "Աշտարակ", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Ֆրանսիայի։",
+    answers: [
+      { text: "Մարսել", correct: false },
+      { text: "Փարիզ", correct: true },
+      { text: "Լիոն", correct: false },
+      { text: "Բորդո", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Գերմանիայի։",
+    answers: [
+      { text: "Բեռլին", correct: true },
+      { text: "Համբուրգ", correct: false },
+      { text: "Մյունխեն", correct: false },
+      { text: "Քյոլն", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Իտալիայի։",
+    answers: [
+      { text: "Միլան", correct: false },
+      { text: "Նեապոլ", correct: false },
+      { text: "Հռոմ", correct: true },
+      { text: "Ֆլորենցիա", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Ռուսաստանին։",
+    answers: [
+      { text: "Սանկտ Պետերբուրգ", correct: false },
+      { text: "Մոսկվա", correct: true },
+      { text: "Եկատերինբուրգ", correct: false },
+      { text: "Նովոսիբիրսկ", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Իրանի։",
+    answers: [
+      { text: "Շիրազ", correct: false },
+      { text: "Թեհրան", correct: true },
+      { text: "Իսֆահան", correct: false },
+      { text: "Թաբրիզ", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը ԱՄՆ-ի։",
+    answers: [
+      { text: "Նյու Յորք", correct: false },
+      { text: "Լոս Անջելես", correct: false },
+      { text: "Վաշինգտոն", correct: true },
+      { text: "Չիկագո", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Ճապոնիայի։",
+    answers: [
+      { text: "Տոկիո", correct: true },
+      { text: "Օսակա", correct: false },
+      { text: "Նագոյա", correct: false },
+      { text: "Կյոտո", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Չինաստանի։",
+    answers: [
+      { text: "Շանհայ", correct: false },
+      { text: "Պեկին", correct: true },
+      { text: "Չենդու", correct: false },
+      { text: "Գուանչժոու", correct: false },
+    ]
+  },
+  {
+    question: "Ի՞նչ է մայրաքաղաքը Մեծ Բրիտանիայի։",
+    answers: [
+      { text: "Լիվերպուլ", correct: false },
+      { text: "Լոնդոն", correct: true },
+      { text: "Մանչեսթեր", correct: false },
+      { text: "Բրիստոլ", correct: false },
+    ]
+  }
+];
+
+// Shuffle array
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
 }
 
-#name-form-container {
-  margin: auto;
-  text-align: center;
-  padding-top: 100px;
+const nameForm = document.getElementById('name-form');
+const nameInput = document.getElementById('name-input');
+const userNameDisplay = document.getElementById('user-name');
+const scoreInfo = document.getElementById('score-info');
+const questionContainer = document.getElementById('question-container');
+const questionElement = document.getElementById('question');
+const answerButtons = document.getElementById('answer-buttons');
+const tryAgainBtn = document.getElementById('try-again-btn');
+
+let currentQuestionIndex = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let userName = '';
+let questions = [];
+
+nameForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  userName = nameInput.value.trim();
+  if (!userName) return;
+
+  document.getElementById('name-form-container').style.display = 'none';
+  document.getElementById('game-area').style.display = 'block';
+  userNameDisplay.textContent = `👤 ${userName}`;
+
+  startGame();
+});
+
+function startGame() {
+  currentQuestionIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  questions = shuffle([...questionsPool]);
+  showQuestion();
 }
 
-#name-input {
-  padding: 10px 14px;
-  font-size: 18px;
-  margin-top: 10px;
-  width: 280px;
-  border-radius: 8px;
-  border: 1.5px solid #888;
-  transition: border-color 0.3s;
+function showQuestion() {
+  resetState();
+
+  const q = questions[currentQuestionIndex];
+  questionElement.textContent = q.question;
+
+  const shuffledAnswers = shuffle(q.answers);
+  shuffledAnswers.forEach((ans) => {
+    const btn = document.createElement('button');
+    btn.classList.add('btn');
+    btn.textContent = ans.text;
+    if (ans.correct) btn.dataset.correct = true;
+    btn.addEventListener('click', selectAnswer);
+    answerButtons.appendChild(btn);
+  });
+
+  updateScore();
 }
 
-#name-input:focus {
-  border-color: #3a86ff;
-  outline: none;
+function resetState() {
+  answerButtons.innerHTML = '';
+  tryAgainBtn.style.display = 'none';
 }
 
-#name-form button {
-  margin-left: 15px;
-  padding: 10px 20px;
-  font-size: 18px;
-  border-radius: 8px;
-  border: none;
-  background-color: #3a86ff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
+function selectAnswer(e) {
+  const selected = e.target;
+  const isCorrect = selected.dataset.correct === 'true';
+
+  Array.from(answerButtons.children).forEach(btn => {
+    const correct = btn.dataset.correct === 'true';
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    btn.disabled = true;
+  });
+
+  if (isCorrect) correctCount++;
+  else wrongCount++;
+
+  updateScore();
+
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }, 1500);
 }
 
-#name-form button:hover {
-  background-color: #2657a6;
+function updateScore() {
+  const remaining = questions.length - (correctCount + wrongCount);
+  scoreInfo.textContent = `Մնաց՝ ${remaining} | Ճիշտ՝ ${correctCount} | Սխալ՝ ${wrongCount}`;
 }
 
-#header-bar {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  margin-bottom: 15px;
-  font-weight: 700;
-  font-size: 20px;
-  color: #1a1a1a;
-  user-select: none;
+function showResult() {
+  questionElement.textContent = correctCount >= 5 ? '🏆 Հաղթանակ!' : '❌ Պարտություն';
+  answerButtons.innerHTML = '';
+  tryAgainBtn.style.display = 'block';
 }
 
-#user-name {
-  text-align: left;
-}
-
-#score-info {
-  text-align: right;
-}
-
-#question-container {
-  background: rgba(255,255,255,0.9);
-  border-radius: 12px;
-  padding: 25px 30px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-#question {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #222;
-}
-
-.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.btn {
-  background-color: #3a86ff;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  padding: 14px 10px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 4px 12px rgba(58, 134, 255, 0.5);
-  user-select: none;
-}
-
-.btn:hover {
-  background-color: #2657a6;
-  box-shadow: 0 6px 18px rgba(38, 87, 166, 0.7);
-}
-
-.btn.correct {
-  background-color: #28a745 !important;
-  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.7) !important;
-  border: 2px solid #1e7e34;
-  animation: glowGreen 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes glowGreen {
-  0% { box-shadow: 0 0 8px 2px #28a745; }
-  100% { box-shadow: 0 0 15px 5px #28a745; }
-}
-
-.btn.wrong {
-  background-color: #dc3545 !important;
-  box-shadow: 0 6px 18px rgba(220, 53, 69, 0.7) !important;
-  border: 2px solid #a71d2a;
-}
-
-#try-again-btn {
-  margin-top: 30px;
-  padding: 14px 28px;
-  font-size: 20px;
-  border: none;
-  border-radius: 12px;
-  background-color: #ff4b5c;
-  color: white;
-  cursor: pointer;
-  display: block;
-  max-width: 280px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 6px 20px rgba(255, 75, 92, 0.7);
-  transition: background-color 0.3s;
-  user-select: none;
-}
-
-#try-again-btn:hover {
-  background-color: #cc3a48;
-}
+tryAgainBtn.addEventListener('click', () => {
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('name-form-container').style.display = 'block';
+  nameInput.value = '';
+});
