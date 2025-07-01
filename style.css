@@ -1,99 +1,59 @@
 body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #8EC5FC, #E0C3FC);
   margin: 0;
-  font-family: 'Rubik', sans-serif;
-  background: linear-gradient(135deg, #8e44ad, #3498db);
-  color: #fff;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  color: #333;
 }
 
-#name-form-container {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 30px;
+#name-form-container, #game-area {
+  background: white;
+  padding: 20px;
   border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  text-align: center;
-}
-
-#name-input {
-  padding: 10px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 8px;
-  width: 200px;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: #2ecc71;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-weight: 600;
-}
-
-button:hover {
-  background-color: #27ae60;
-}
-
-#game-area {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   width: 90%;
-  max-width: 600px;
-  text-align: center;
-  margin-top: 20px;
+  max-width: 500px;
 }
 
 #header-bar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-weight: bold;
-}
-
-#question {
-  font-size: 1.3rem;
-  margin-bottom: 20px;
 }
 
 .btn-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-.btn-grid button {
-  background-color: #ffffff22;
-  border: 2px solid #ffffff44;
-  border-radius: 12px;
-  padding: 12px;
-  transition: all 0.3s ease;
+button {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #6c63ff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.btn-grid button:hover {
-  background-color: #ffffff55;
+button:hover {
+  background: #574fd6;
 }
 
 .correct {
-  background-color: #2ecc71 !important;
-  color: #fff;
+  background-color: #4CAF50 !important;
+  color: white;
 }
 
 .wrong {
-  background-color: #e74c3c !important;
-  color: #fff;
-}
-
-.fade-in {
-  animation: fadeIn 0.6s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  background-color: #F44336 !important;
+  color: white;
 }
