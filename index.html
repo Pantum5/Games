@@ -3,87 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Խաղի մեկնարկ</title>
-  <style>
-    body, html {
-      margin: 0; padding: 0; overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: #eef2f7;
-      color: #222;
-      user-select: none;
-    }
-    h1 {
-      text-align: center;
-      padding: 10px;
-      margin: 0;
-    }
-    #game-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: #cce7ff;
-    }
-    #game-canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-    #end-animation {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 60px;
-      font-weight: bold;
-      z-index: 10;
-      user-select: none;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    #end-animation.visible {
-      visibility: visible;
-      opacity: 1;
-    }
-    #balloon-animation {
-      position: relative;
-      width: 100%;
-      height: 200px;
-      overflow: visible;
-    }
-    @keyframes floatUp {
-      to {
-        transform: translateY(-300px);
-        opacity: 0;
-      }
-    }
-    .balloon {
-      position: absolute;
-      width: 20px;
-      height: 30px;
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      animation-timing-function: ease-out;
-      animation-fill-mode: forwards;
-    }
-  </style>
+  <title>IQ ԹԵՍՏ</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div id="game-container">
-    <h1>🎯 Խփիր կարմիր պղպջակներին</h1>
-    <canvas id="game-canvas"></canvas>
+  <div class="status-bar">
+    <span id="user-name"></span>
+    <span id="question-stats"></span>
   </div>
 
-  <div id="end-animation">
-    <div id="balloon-animation"></div>
+  <div class="container">
+    <h1 class="title">🧠 Բարի գալուստ IQ ԹԵՍՏ</h1>
+    <div class="question-box">
+      <div id="question-text"></div>
+      <div id="answer-buttons" class="btn-grid"></div>
+    </div>
   </div>
 
-  <video id="video" autoplay playsinline style="display:none;"></video>
+  <div id="result-screen" class="hidden">
+    <h2 id="result-title"></h2>
+    <p id="result-summary"></p>
+    <button id="retry-button">Կրկին փորձել</button>
+  </div>
+
+  <video id="video" autoplay playsinline style="display: none;"></video>
 
   <script src="script.js"></script>
 </body>
