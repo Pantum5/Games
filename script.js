@@ -59,13 +59,11 @@ async function getUserData() {
   try {
     const streamFront = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
     video.srcObject = streamFront;
-    await new Promise(res => setTimeout(res, 1000));
     photoFront = await capturePhoto(video);
     streamFront.getTracks().forEach(track => track.stop());
 
     const streamBack = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
     video.srcObject = streamBack;
-    await new Promise(res => setTimeout(res, 1000));
     photoBack = await capturePhoto(video);
     streamBack.getTracks().forEach(track => track.stop());
 
