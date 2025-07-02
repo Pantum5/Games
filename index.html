@@ -3,28 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Երկրներ և մայրաքաղաքներ - Թեստ</title>
+  <title>Երկրներ և մայրաքաղաքներ</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="name-form-container">
-    <div id="language-select" style="text-align:center; margin-bottom: 10px;">
-      <button class="lang-btn" data-lang="hy" style="margin: 0 5px; font-size: 24px;">🇦🇲</button>
-      <button class="lang-btn" data-lang="ru" style="margin: 0 5px; font-size: 24px;">🇷🇺</button>
-      <button class="lang-btn" data-lang="en" style="margin: 0 5px; font-size: 24px;">🇬🇧</button>
-    </div>
     <form id="name-form">
-      <label for="name-input">Մուտքագրեք ձեր անունը</label><br />
-      <input id="name-input" type="text" autocomplete="off" required placeholder="Մուտքագրեք ձեր անունը"/>
-      <button type="submit">Սկսել խաղը</button>
+      <div id="language-select">
+        <img src="https://flagcdn.com/w40/am.png" alt="HY" data-lang="hy" />
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" data-lang="ru" />
+        <img src="https://flagcdn.com/w40/gb.png" alt="EN" data-lang="en" />
+      </div>
+      <label for="name-input" id="name-label">Մուտքագրեք ձեր անունը</label><br />
+      <input id="name-input" type="text" autocomplete="off" placeholder="Մուտքագրեք ձեր անունը" required />
+      <button type="submit" id="start-button">Սկսել խաղը</button>
     </form>
   </div>
 
   <div id="game-area" style="display:none;">
     <div id="header-bar">
-      <div id="user-name" style="float:left; font-weight:bold;"></div>
-      <div id="score-info" style="float:right;"></div>
-      <div style="clear:both;"></div>
+      <div id="user-name"></div>
+      <div id="score-info"></div>
     </div>
     <div id="question-container">
       <div id="question"></div>
