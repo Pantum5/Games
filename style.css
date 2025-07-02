@@ -1,65 +1,131 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #e0f7fa, #ffffff);
   margin: 0;
-  padding: 0;
-  text-align: center;
+  background: linear-gradient(145deg, #e0f7fa, #ffe0f7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  transition: background 0.3s ease-in-out;
+}
+
+#language-select {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.lang-flag {
+  cursor: pointer;
+  font-size: 24px;
+  margin: 0 5px;
+  transition: transform 0.2s;
+}
+.lang-flag:hover {
+  transform: scale(1.2);
 }
 
 #name-form-container {
-  margin-top: 100px;
+  text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+#name-form input {
+  padding: 10px;
+  font-size: 18px;
+  width: 200px;
+  margin-top: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+}
+
+#name-form button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #26a69a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#name-form button:hover {
+  background-color: #00796b;
 }
 
 #game-area {
+  width: 100%;
+  max-width: 600px;
   padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 #header-bar {
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
-  background: #0288d1;
-  color: white;
-  font-weight: bold;
   font-size: 18px;
+  margin-bottom: 20px;
 }
 
 #question {
-  font-size: 24px;
-  margin: 30px 0 20px;
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .btn-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 300px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
-button {
-  padding: 10px 15px;
+.btn-grid button {
+  padding: 10px;
   font-size: 16px;
-  border: none;
-  border-radius: 6px;
+  background-color: #e0f7fa;
+  border: 2px solid #26a69a;
+  border-radius: 10px;
   cursor: pointer;
-  background: #03a9f4;
-  color: white;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
-button:hover {
-  background: #0288d1;
+.btn-grid button:hover {
+  background-color: #b2ebf2;
 }
 
 .correct {
-  background-color: #4caf50 !important;
+  background-color: #c8e6c9 !important;
+  border-color: #2e7d32 !important;
+  color: #2e7d32;
 }
 
 .wrong {
-  background-color: #f44336 !important;
+  background-color: #ffcdd2 !important;
+  border-color: #c62828 !important;
+  color: #c62828;
 }
 
 #try-again-btn {
-  margin-top: 30px;
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #2196f3;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+  transition: background 0.3s;
+}
+
+#try-again-btn:hover {
+  background-color: #1565c0;
 }
