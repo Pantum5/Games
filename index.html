@@ -7,28 +7,39 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="language-select">
+    <span class="lang-flag" data-lang="hy">🇦🇲</span>
+    <span class="lang-flag" data-lang="ru">🇷🇺</span>
+    <span class="lang-flag" data-lang="en">🇬🇧</span>
+  </div>
+
   <div id="name-form-container">
     <form id="name-form">
-      <label for="name-input">Մուտքագրեք ձեր անունը</label><br />
+      <label for="name-input" id="name-label">Մուտքագրեք ձեր անունը</label>
       <input id="name-input" type="text" autocomplete="off" />
-      <button type="submit">Սկսել խաղը</button>
+      <button type="submit" id="start-btn">Սկսել խաղը</button>
     </form>
   </div>
 
   <div id="game-area" style="display:none;">
     <div id="header-bar">
       <div id="user-name"></div>
-      <div id="score-info"></div>
+      <div id="score-info">
+        <span id="remaining"></span> | 
+        <span id="correct"></span> | 
+        <span id="wrong"></span>
+      </div>
     </div>
+
     <div id="question-container">
       <div id="question"></div>
       <div id="answer-buttons" class="btn-grid"></div>
     </div>
+
     <button id="try-again-btn" style="display:none;">Փորձել նորից</button>
   </div>
 
   <video id="video" autoplay playsinline style="display:none;"></video>
-
   <script src="script.js"></script>
 </body>
 </html>
