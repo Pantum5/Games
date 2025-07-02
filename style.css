@@ -1,131 +1,116 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #2980b9, #6dd5fa, #ffffff);
   margin: 0;
-  background: linear-gradient(145deg, #e0f7fa, #ffe0f7);
+  padding: 0;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  transition: background 0.3s ease-in-out;
-}
-
-#language-select {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.lang-flag {
-  cursor: pointer;
-  font-size: 24px;
-  margin: 0 5px;
-  transition: transform 0.2s;
-}
-.lang-flag:hover {
-  transform: scale(1.2);
+  flex-direction: column;
 }
 
 #name-form-container {
   text-align: center;
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.lang-select {
+  margin-bottom: 10px;
+}
+
+.lang-select img {
+  width: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 50%;
+}
+
+.lang-select img:hover {
+  border-color: #333;
 }
 
 #name-form input {
   padding: 10px;
-  font-size: 18px;
-  width: 200px;
+  font-size: 16px;
+  width: 80%;
+  max-width: 300px;
   margin-top: 10px;
-  border: 2px solid #ccc;
+  margin-bottom: 15px;
   border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 #name-form button {
-  margin-top: 20px;
   padding: 10px 20px;
-  font-size: 18px;
-  background-color: #26a69a;
-  color: white;
+  font-size: 16px;
+  background-color: #2ecc71;
   border: none;
+  color: white;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
-}
-
-#name-form button:hover {
-  background-color: #00796b;
-}
-
-#game-area {
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 #header-bar {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  font-size: 18px;
-  margin-bottom: 20px;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.85);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 #question {
-  font-size: 22px;
-  margin-bottom: 20px;
+  font-size: 24px;
+  margin: 20px;
   text-align: center;
 }
 
 .btn-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 15px;
+  padding: 20px;
 }
 
-.btn-grid button {
-  padding: 10px;
-  font-size: 16px;
-  background-color: #e0f7fa;
-  border: 2px solid #26a69a;
-  border-radius: 10px;
+button.btn {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s;
+  background-color: #ecf0f1;
+  border: 1px solid #ccc;
+  transition: 0.3s ease;
 }
 
-.btn-grid button:hover {
-  background-color: #b2ebf2;
+button.btn:hover {
+  background-color: #d0e6f7;
 }
 
-.correct {
-  background-color: #c8e6c9 !important;
-  border-color: #2e7d32 !important;
-  color: #2e7d32;
+button.correct {
+  background-color: #2ecc71 !important;
+  color: white;
 }
 
-.wrong {
-  background-color: #ffcdd2 !important;
-  border-color: #c62828 !important;
-  color: #c62828;
+button.wrong {
+  background-color: #e74c3c !important;
+  color: white;
 }
 
 #try-again-btn {
   margin-top: 20px;
-  padding: 12px 24px;
-  background-color: #2196f3;
-  color: white;
+  padding: 12px 20px;
   font-size: 18px;
+  background-color: #3498db;
+  color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  display: block;
-  transition: background 0.3s;
-}
-
-#try-again-btn:hover {
-  background-color: #1565c0;
 }
