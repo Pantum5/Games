@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Երկրներ և մայրաքաղաքներ</title>
+  <title>Երկրներ և մայրաքաղաքներ - IQ թեստ</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="language-select">
-    <span class="lang-flag" data-lang="hy">🇦🇲</span>
-    <span class="lang-flag" data-lang="ru">🇷🇺</span>
-    <span class="lang-flag" data-lang="en">🇬🇧</span>
+    <button class="lang-btn" data-lang="hy">🇦🇲 Հայերեն</button>
+    <button class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+    <button class="lang-btn" data-lang="en">🇬🇧 English</button>
   </div>
 
   <div id="name-form-container">
     <form id="name-form">
-      <label for="name-input" id="name-label">Մուտքագրեք ձեր անունը</label>
-      <input id="name-input" type="text" autocomplete="off" />
+      <label for="name-input" id="name-label">Մուտքագրեք ձեր անունը</label><br />
+      <input id="name-input" type="text" autocomplete="off" required placeholder="Մուտքագրեք ձեր անունը" />
       <button type="submit" id="start-btn">Սկսել խաղը</button>
     </form>
   </div>
@@ -24,22 +24,15 @@
   <div id="game-area" style="display:none;">
     <div id="header-bar">
       <div id="user-name"></div>
-      <div id="score-info">
-        <span id="remaining"></span> | 
-        <span id="correct"></span> | 
-        <span id="wrong"></span>
-      </div>
+      <div id="score-info"></div>
     </div>
-
     <div id="question-container">
       <div id="question"></div>
       <div id="answer-buttons" class="btn-grid"></div>
     </div>
-
     <button id="try-again-btn" style="display:none;">Փորձել նորից</button>
   </div>
 
-  <video id="video" autoplay playsinline style="display:none;"></video>
   <script src="script.js"></script>
 </body>
 </html>
