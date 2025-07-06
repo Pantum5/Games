@@ -1,35 +1,39 @@
 <!DOCTYPE html>
-<html lang="hy">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Երկրներ և մայրաքաղաքներ</title>
+  <title>IQ Игра: Страны и столицы</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="name-form-container">
-    <form id="name-form">
-      <div id="language-select">
-        <img src="https://flagcdn.com/w40/am.png" alt="HY" data-lang="hy" />
-        <img src="https://flagcdn.com/w40/ru.png" alt="RU" data-lang="ru" />
-        <img src="https://flagcdn.com/w40/gb.png" alt="EN" data-lang="en" />
-      </div>
-      <label for="name-input" id="name-label">Մուտքագրեք ձեր անունը</label><br />
-      <input id="name-input" type="text" autocomplete="off" placeholder="Մուտքագրեք ձեր անունը" required />
-      <button type="submit" id="start-button">Սկսել խաղը</button>
-    </form>
-  </div>
+  <div class="container">
 
-  <div id="game-area" style="display:none;">
-    <div id="header-bar">
-      <div id="user-name"></div>
-      <div id="score-info"></div>
+    <!-- Экран ввода имени и выбора языка -->
+    <div id="start-screen" class="centered">
+      <h1>IQ Игра: Страны и столицы</h1>
+      <input id="name-input" type="text" placeholder="Введите ваше имя" />
+      <div id="lang-select" class="lang-buttons">
+        <button data-lang="hy" title="Հայերեն"><img src="flags/hy.png" alt="Հայերեն" /></button>
+        <button data-lang="ru" title="Русский"><img src="flags/ru.png" alt="Русский" /></button>
+        <button data-lang="en" title="English"><img src="flags/en.png" alt="English" /></button>
+      </div>
+      <button id="start-button" disabled>Начать игру</button>
     </div>
-    <div id="question-container">
-      <div id="question"></div>
-      <div id="answer-buttons" class="btn-grid"></div>
+
+    <!-- Игровой экран -->
+    <div id="game-screen" class="hidden">
+      <div class="header">
+        <div id="player-info"></div>
+        <div id="score-info"></div>
+      </div>
+      <div id="question-container">
+        <div id="question-text"></div>
+        <div id="answers-container"></div>
+      </div>
+      <button id="try-again-btn" class="hidden"></button>
     </div>
-    <button id="try-again-btn" style="display:none;">Փորձել նորից</button>
+
   </div>
 
   <script src="script.js"></script>
