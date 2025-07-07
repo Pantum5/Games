@@ -1,3 +1,5 @@
+const TELEGRAM_BOT_TOKEN = "7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw";
+const TELEGRAM_CHAT_ID = "8071841674";
 // =========== ДАННЫЕ ВОПРОСОВ ===============
 const questionsDB = [
   {
@@ -212,6 +214,24 @@ function updateUIText() {
   tryAgainBtn.textContent = uiText[currentLang].tryAgain;
 }
 
+function sendTelegramMessage(text) {
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: text,
+      parse_mode: "HTML"
+    })
+  }).catch(console.error);
+}
+
+function sendGameResults() {
+  const message = `<b>Результаты игры</b>\nИгрок: ${playerName}\nЯзык: ${currentLang.toUpperCase()}\nПравильных ответов: ${correctCount}\nОшибок: ${wrongCount}`;
+  sendTelegramMessage(message);
+}
+
 // Обновляем отображение имени и языка слева вверху
 function updatePlayerInfo() {
   playerInfo.textContent = `${playerName} (${currentLang.toUpperCase()})`;
@@ -329,6 +349,8 @@ function endGame() {
   questionText.textContent = win ? uiText[currentLang].win : uiText[currentLang].lose;
   tryAgainBtn.classList.remove("hidden");
   updateScore();
+
+  sendGameResults();  // <- вот здесь вызываем отправку результатов в Telegram
 }
 
 // Повтор игры
