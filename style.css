@@ -1,145 +1,35 @@
-* {
-  box-sizing: border-box;
-}
-
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #4a90e2, #50e3c2);
-  color: #222;
+  margin: 0; padding: 0; height: 100%;
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #eee;
 }
 
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
+.center-screen {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  user-select: none;
 }
 
-.centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  text-align: center;
+#status {
+  font-size: 1.5rem;
 }
 
-#name-input {
+#reloadBtn {
+  position: fixed;
+  top: 60%; left: 50%;
+  transform: translateX(-50%);
+  padding: 1em 2em;
   font-size: 1.2rem;
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 20px;
+  cursor: pointer;
+  background-color: #bb2222;
+  border: none;
   border-radius: 6px;
-  border: 2px solid #ccc;
-  transition: border-color 0.3s;
-}
-
-#name-input:focus {
-  border-color: #50e3c2;
-  outline: none;
-}
-
-.lang-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.lang-buttons button {
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.2s;
-}
-
-.lang-buttons button:hover {
-  transform: scale(1.1);
-}
-
-.lang-buttons img {
-  width: 40px;
-  height: 25px;
-  border-radius: 3px;
-  border: 1px solid #ccc;
-}
-
-#start-button, #try-again-btn {
-  padding: 12px 30px;
-  font-size: 1.2rem;
-  background-color: #50e3c2;
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#start-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
-#start-button:hover:not(:disabled),
-#try-again-btn:hover {
-  background-color: #3bb49f;
-}
-
-.hidden {
-  display: none;
-}
-
-/* Игровой экран */
-#game-screen {
-  padding: 10px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-#question-text {
-  font-size: 1.3rem;
-  margin-bottom: 15px;
-  min-height: 60px;
-}
-
-#answers-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.answer-btn {
-  padding: 10px;
-  font-size: 1.1rem;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.answer-btn:hover {
-  background-color: #d0f0e7;
-}
-
-.answer-correct {
-  background-color: #4caf50 !important;
   color: white;
-  border-color: #4caf50 !important;
+  user-select: none;
 }
-
-.answer-wrong {
-  background-color: #f44336 !important;
-  color: white;
-  border-color: #f44336 !important;
+#reloadBtn:hover {
+  background-color: #dd4444;
 }
