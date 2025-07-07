@@ -138,7 +138,9 @@ const questionsDB = [
   {
     hy: { q: "Որն է Պակիստանի մայրաքաղաքը", options: ["Կարաչի", "Լահոր", "Իսլամաբադ", "Քվետա"], answer: "Իսլամաբադ" },
     ru: { q: "Столица Пакистана?", options: ["Карачи", "Лахор", "Исламабад", "Кветта"], answer: "Исламабад" },
-    en: { q: "What is the capital of Pakistan?", options: ["Karachi", "Lahore", "Islamabad
+    en: { q: "What is the capital of Pakistan?", options: ["Karachi", "Lahore", "Islamabad", "Quetta"], answer: "Islamabad" }
+  }
+];
 
 
 // ========== Локализация интерфейса ===========
