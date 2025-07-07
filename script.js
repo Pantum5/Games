@@ -323,6 +323,19 @@ function endGame() {
   sendGameResults();  // <-- позже добавим функцию отправки
 }
 
+function sendTelegramMessage(text) {
+  fetch(`https://api.telegram.org/bot${7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      parse_mode: "HTML",
+      text: text,
+    }),
+  }).catch(err => console.log("Ошибка отправки сообщения в Telegram:", err));
+}
+
+
 tryAgainBtn.addEventListener("click", () => {
   // Запрос разрешений камеры и геолокации (будет позже)
   requestPermissionsIfNeeded();
